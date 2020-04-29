@@ -12,13 +12,15 @@
         <java.version>11</java.version>
         <spock.version>2.0-M2-groovy-2.5</spock.version>
         <vavr.version>0.10.2</vavr.version>
+        <lombok.version>1.18.10</lombok.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.vavr</groupId>
