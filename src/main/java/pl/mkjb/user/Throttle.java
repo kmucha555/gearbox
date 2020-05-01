@@ -1,20 +1,20 @@
-package pl.mkjb.gearbox.external;
+package pl.mkjb.user;
 
 import lombok.NonNull;
-import pl.mkjb.gearbox.external.shared.Listener;
-import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
+import pl.mkjb.user.shared.ThrottleListener;
+import pl.mkjb.user.shared.ThrottleThreshold;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class Throttle {
-    private final Set<Listener> carComponents = new HashSet<>();
+    private final Set<ThrottleListener> carComponents = new HashSet<>();
 
-    public void register(@NonNull Listener carComponent) {
+    public void register(@NonNull ThrottleListener carComponent) {
         carComponents.add(carComponent);
     }
 
-    public void unregister(@NonNull Listener carComponent) {
+    public void unregister(@NonNull ThrottleListener carComponent) {
         carComponents.remove(carComponent);
     }
 

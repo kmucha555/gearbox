@@ -7,7 +7,8 @@ import pl.mkjb.gearbox.gearbox.shared.GearLimit;
 @RequiredArgsConstructor
 class Gearbox {
     private final GearLimit gearLimit;
-    private int currentGear;
+    private int currentGear = 0;
+    private static final int REVERSE_GEAR_LIMIT = -1;
 
     public void changeGear(Gear gear) {
         this.currentGear = gear.getGear();

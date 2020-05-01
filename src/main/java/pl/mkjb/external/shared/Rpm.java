@@ -1,4 +1,4 @@
-package pl.mkjb.gearbox.external.shared;
+package pl.mkjb.external.shared;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

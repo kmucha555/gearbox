@@ -1,4 +1,4 @@
-package pl.mkjb.gearbox.external;
+package pl.mkjb.external;
 
 import lombok.NoArgsConstructor;
 import lombok.val;

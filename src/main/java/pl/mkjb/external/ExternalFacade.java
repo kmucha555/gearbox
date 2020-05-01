@@ -1,7 +1,7 @@
-package pl.mkjb.gearbox.external;
+package pl.mkjb.external;
 
 import lombok.RequiredArgsConstructor;
-import pl.mkjb.gearbox.external.shared.Rpm;
+import pl.mkjb.external.shared.Rpm;
 
 @RequiredArgsConstructor
 public class ExternalFacade {

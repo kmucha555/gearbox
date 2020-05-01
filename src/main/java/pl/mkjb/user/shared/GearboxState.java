@@ -1,4 +1,4 @@
-package pl.mkjb.gearbox.gearbox.shared;
+package pl.mkjb.user.shared;
 
 public enum GearboxState {
     PARK, REVERSE, NEUTRAL, DRIVE, COAST

@@ -5,8 +5,9 @@ public class GearLimit {
 
     public GearLimit(int max) {
         if (max < 6 || max > 10) {
-            throw new IllegalArgumentException("Minimal number of gears is between 6 & 10.");
+            throw new IllegalArgumentException("Number of gears must be between 6 & 10");
         }
+        
         this.max = max;
     }
 

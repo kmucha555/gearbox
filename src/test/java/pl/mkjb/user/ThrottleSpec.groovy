@@ -1,8 +1,7 @@
-package pl.mkjb.gearbox.external
+package pl.mkjb.user
 
-
-import pl.mkjb.gearbox.external.shared.Listener
-import pl.mkjb.gearbox.external.shared.ThrottleThreshold
+import pl.mkjb.user.shared.ThrottleListener
+import pl.mkjb.user.shared.ThrottleThreshold
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -29,7 +28,7 @@ class ThrottleSpec extends Specification {
     def "should send event to subscribers when new throttle threshold is given"() {
         given:
         def threshold = new ThrottleThreshold(50)
-        def carComponent = Mock(Listener)
+        def carComponent = Mock(ThrottleListener)
         throttle.register(carComponent)
 
         when:

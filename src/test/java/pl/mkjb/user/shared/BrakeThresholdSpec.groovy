@@ -1,15 +1,14 @@
-package pl.mkjb.gearbox.external.shared
-
+package pl.mkjb.user.shared
 
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class ThrottleThresholdSpec extends Specification {
+class BrakeThresholdSpec extends Specification {
 
     @Unroll
     def "should return given threshold level"() {
         expect:
-        new ThrottleThreshold(input).getLevel() == output
+        new BrakeThreshold(input).level == output
 
         where:
         input | output
@@ -21,7 +20,7 @@ class ThrottleThresholdSpec extends Specification {
     @Unroll
     def "should throw exception when threshold is out of bounds"() {
         when:
-        new ThrottleThreshold(input)
+        new BrakeThreshold(input)
 
         then:
         thrown(IllegalArgumentException)

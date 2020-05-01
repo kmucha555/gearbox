@@ -1,10 +1,7 @@
-package pl.mkjb.gearbox.external.shared;
+package pl.mkjb.user.shared;
 
-import lombok.Getter;
-
-@Getter
 public class ThrottleThreshold {
-    private final int level;
+    public final int level;
 
     public ThrottleThreshold(int level) {
         if (level < 0 || level > 100) {
