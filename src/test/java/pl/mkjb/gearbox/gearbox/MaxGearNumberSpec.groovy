@@ -9,7 +9,7 @@ class MaxGearNumberSpec extends Specification {
     @Unroll
     def "should return given max number of gears"() {
         expect: "returns max number of gears"
-        new GearLimit(input).getMaxGearNumber() == output
+        new GearLimit(input).maxGearNumber == output
 
         where:
         input | output

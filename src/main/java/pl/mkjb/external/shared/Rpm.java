@@ -1,10 +1,10 @@
 package pl.mkjb.external.shared;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Getter
 public class Rpm {
-    private final int rpm;
+    private static final int MAX_ENGINE_RPM = 7000;
+    public final int rpm;
+
 }

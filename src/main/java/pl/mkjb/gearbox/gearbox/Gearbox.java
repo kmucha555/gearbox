@@ -11,7 +11,7 @@ class Gearbox {
     private static final int REVERSE_GEAR_LIMIT = -1;
 
     public void changeGear(Gear gear) {
-        this.currentGear = gear.getGear();
+        this.currentGear = gear.newGear;
     }
 
     public Gear getCurrentGear() {
