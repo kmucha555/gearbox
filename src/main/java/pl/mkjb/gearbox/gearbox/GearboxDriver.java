@@ -8,6 +8,7 @@ import lombok.val;
 import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
 import pl.mkjb.gearbox.settings.GearboxState;
+import pl.mkjb.gearbox.settings.Mode;
 
 import static pl.mkjb.gearbox.settings.Setting.MAX_GEAR_NUMBER;
 import static pl.mkjb.gearbox.settings.Setting.MIN_GEAR_NUMBER;
@@ -20,6 +21,7 @@ public class GearboxDriver {
     private ThrottleThreshold throttleThreshold;
     private BrakeThreshold brakeThreshold;
     private GearboxState gearboxState;
+    private Mode mode;
 
     public static GearboxDriver powerUpGearbox() {
         val externalSystems = new ExternalSystem();
@@ -31,7 +33,6 @@ public class GearboxDriver {
     @Subscribe
     public void onThrottleChange(ThrottleThreshold throttleThreshold) {
         this.throttleThreshold = throttleThreshold;
-        log.info("Throttle set to {}", throttleThreshold.level);
     }
 
     @Subscribe
@@ -42,5 +43,10 @@ public class GearboxDriver {
     @Subscribe
     public void onGearStickPositionChange(GearboxState gearboxState) {
         this.gearboxState = gearboxState;
+    }
+
+    @Subscribe
+    public void onDriveModeChange(Mode mode) {
+        this.mode = mode;
     }
 }
