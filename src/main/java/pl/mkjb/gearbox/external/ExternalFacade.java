@@ -36,7 +36,7 @@ public class ExternalFacade {
                 .build();
     }
 
-    public void stop() {
+    public void start() {
         throttle.sendEvent(new ThrottleThreshold(MIN_THRESHOLD));
         brake.sendEvent(new BrakeThreshold(MIN_THRESHOLD));
         engine.sendEvent(new RevGauge(IDLE_RPM));
