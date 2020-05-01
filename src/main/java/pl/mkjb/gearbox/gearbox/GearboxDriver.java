@@ -7,10 +7,10 @@ import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
-import pl.mkjb.gearbox.settings.GearboxState;
+import pl.mkjb.gearbox.settings.State;
 import pl.mkjb.gearbox.settings.Mode;
 
-import static pl.mkjb.gearbox.settings.GearboxState.*;
+import static pl.mkjb.gearbox.settings.State.PARK;
 import static pl.mkjb.gearbox.settings.Mode.COMFORT;
 import static pl.mkjb.gearbox.settings.Setting.*;
 
@@ -19,17 +19,19 @@ import static pl.mkjb.gearbox.settings.Setting.*;
 public class GearboxDriver {
     private final Gearbox gearbox;
     private final GearCalculator gearCalculator;
+    private final GearboxState gearboxState;
     private ThrottleThreshold throttleThreshold = new ThrottleThreshold(MIN_THRESHOLD);
     private BrakeThreshold brakeThreshold = new BrakeThreshold(MIN_THRESHOLD);
-    private GearboxState gearboxState = PARK;
+    private State state = PARK;
     private Mode mode = COMFORT;
 
     public static GearboxDriver powerUpGearbox() {
         val externalSystems = new ExternalSystem();
         val gearCalc = new GearCalculator(externalSystems);
+        var gearState = new GearboxState(externalSystems);
         val gearbox = new Gearbox(MIN_GEAR_NUMBER, MAX_GEAR_NUMBER);
 
-        return new GearboxDriver(gearbox, gearCalc);
+        return new GearboxDriver(gearbox, gearCalc, gearState);
     }
 
     private void changeGear() {
@@ -43,7 +45,7 @@ public class GearboxDriver {
         return DriverInput.builder()
                 .throttleThreshold(throttleThreshold)
                 .brakeThreshold(brakeThreshold)
-                .gearboxState(gearboxState)
+                .state(state)
                 .mode(mode)
                 .build();
     }
@@ -61,8 +63,8 @@ public class GearboxDriver {
     }
 
     @Subscribe
-    public void onGearStickPositionChange(GearboxState gearboxState) {
-        this.gearboxState = gearboxState;
+    public void onGearStickPositionChange(State state) {
+        this.state = state;
         changeGear();
     }
 

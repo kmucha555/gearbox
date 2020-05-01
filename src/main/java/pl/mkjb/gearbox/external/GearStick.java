@@ -2,14 +2,14 @@ package pl.mkjb.gearbox.external;
 
 import com.google.common.eventbus.EventBus;
 import lombok.RequiredArgsConstructor;
-import pl.mkjb.gearbox.settings.GearboxState;
+import pl.mkjb.gearbox.settings.State;
 
 @RequiredArgsConstructor
-class GearStick implements Component<GearboxState> {
+class GearStick implements Component<State> {
     private final EventBus eventBus;
 
     @Override
-    public void sendEvent(GearboxState event) {
+    public void sendEvent(State event) {
         eventBus.post(event);
     }
 }

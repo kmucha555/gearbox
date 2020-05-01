@@ -7,10 +7,10 @@ import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 import pl.mkjb.gearbox.external.shared.LinearSpeed;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
-import pl.mkjb.gearbox.settings.GearboxState;
+import pl.mkjb.gearbox.settings.State;
 import pl.mkjb.gearbox.settings.Mode;
 
-import static pl.mkjb.gearbox.settings.GearboxState.PARK;
+import static pl.mkjb.gearbox.settings.State.PARK;
 import static pl.mkjb.gearbox.settings.Mode.COMFORT;
 import static pl.mkjb.gearbox.settings.Setting.*;
 
@@ -20,7 +20,7 @@ public class ExternalFacade {
     private final Component<ThrottleThreshold> throttle;
     private final Component<BrakeThreshold> brake;
     private final Component<RevGauge> engine;
-    private final Component<GearboxState> gearStick;
+    private final Component<State> gearStick;
     private final Component<LinearSpeed> velocity;
     private final Component<Mode> mode;
 
