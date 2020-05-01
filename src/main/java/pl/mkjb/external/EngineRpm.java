@@ -1,7 +1,6 @@
 package pl.mkjb.external;
 
 import lombok.NoArgsConstructor;
-import lombok.val;
 
 import java.util.Random;
 
@@ -12,7 +11,6 @@ class EngineRpm {
     private final Random random = new Random();
 
     public int getEngineRpm() {
-        val randomRpm = random.nextInt((MAX_RPM - MIN_RPM) + MIN_RPM);
-        return randomRpm;
+        return random.nextInt((MAX_RPM - MIN_RPM) + MIN_RPM);
     }
 }
