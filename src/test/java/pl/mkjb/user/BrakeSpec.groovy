@@ -5,7 +5,7 @@ import pl.mkjb.user.shared.BrakeThreshold
 import spock.lang.Shared
 import spock.lang.Specification
 
-class BrakeTestSpec extends Specification {
+class BrakeSpec extends Specification {
     @Shared
     def brake = new Brake();
 

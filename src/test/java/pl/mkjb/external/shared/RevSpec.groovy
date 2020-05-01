@@ -1,27 +1,28 @@
 package pl.mkjb.external.shared
 
-
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class RpmTestSpec extends Specification {
+import static pl.mkjb.Settings.*
+
+class RevSpec extends Specification {
 
     @Unroll
     def "should return given rpm value"() {
         expect:
-        new Rpm(input).rpm == output
+        new Rev(input).actualRevs == output
 
         where:
-        input | output
-        0     | 0
-        750   | 750
-        5000  | 5000
+        input    | output
+        ZERO_RPM | ZERO_RPM
+        IDLE_RPM | IDLE_RPM
+        MAX_RPM  | MAX_RPM
     }
 
     @Unroll
     def "should throw exception when rpm value is negative"() {
         when:
-        new Rpm(input)
+        new Rev(input)
 
         then:
         thrown(IllegalArgumentException)

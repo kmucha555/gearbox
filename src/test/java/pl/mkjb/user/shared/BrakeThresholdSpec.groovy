@@ -3,6 +3,8 @@ package pl.mkjb.user.shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static pl.mkjb.Settings.*
+
 class BrakeThresholdSpec extends Specification {
 
     @Unroll
@@ -11,10 +13,10 @@ class BrakeThresholdSpec extends Specification {
         new BrakeThreshold(input).level == output
 
         where:
-        input | output
-        0     | 0
-        55    | 55
-        100   | 100
+        input          | output
+        MIN_THRESHOLD  | MIN_THRESHOLD
+        HALF_THRESHOLD | HALF_THRESHOLD
+        MAX_THRESHOLD  | MAX_THRESHOLD
     }
 
     @Unroll

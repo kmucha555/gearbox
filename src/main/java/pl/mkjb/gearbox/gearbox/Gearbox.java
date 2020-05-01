@@ -2,13 +2,12 @@ package pl.mkjb.gearbox.gearbox;
 
 import lombok.RequiredArgsConstructor;
 import pl.mkjb.gearbox.gearbox.shared.Gear;
-import pl.mkjb.gearbox.gearbox.shared.GearLimit;
 
 @RequiredArgsConstructor
 class Gearbox {
-    private final GearLimit gearLimit;
+    private final int minGear;
+    private final int maxGear;
     private int currentGear = 0;
-    private static final int REVERSE_GEAR_LIMIT = -1;
 
     public void changeGear(Gear gear) {
         this.currentGear = gear.newGear;
@@ -18,7 +17,4 @@ class Gearbox {
         return new Gear(currentGear);
     }
 
-    public GearLimit getGearLimit() {
-        return gearLimit;
-    }
 }

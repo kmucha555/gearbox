@@ -4,6 +4,8 @@ import pl.mkjb.user.shared.ThrottleThreshold
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static pl.mkjb.Settings.*
+
 class ThrottleThresholdSpec extends Specification {
 
     @Unroll
@@ -13,9 +15,9 @@ class ThrottleThresholdSpec extends Specification {
 
         where:
         input | output
-        0     | 0
-        55    | 55
-        100   | 100
+        MIN_THRESHOLD  | MIN_THRESHOLD
+        HALF_THRESHOLD | HALF_THRESHOLD
+        MAX_THRESHOLD  | MAX_THRESHOLD
     }
 
     @Unroll

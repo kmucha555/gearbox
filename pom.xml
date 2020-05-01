@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>pl.mkjb</groupId>
-    <artifactId>Gearbox</artifactId>
+    <artifactId>gearbox</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
@@ -17,9 +17,15 @@
         <spock.version>2.0-M2-groovy-2.5</spock.version>
         <vavr.version>0.10.2</vavr.version>
         <lombok.version>1.18.10</lombok.version>
+        <guava.version>29.0-jre</guava.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
