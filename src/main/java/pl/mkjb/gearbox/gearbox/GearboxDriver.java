@@ -19,33 +19,18 @@ public class GearboxDriver {
     private final Gearbox gearbox;
     private final GearCalculator gearCalculator;
     private final GearboxState gearboxState;
+    private final ExternalSystem externalSystem;
     private ThrottleThreshold throttleThreshold = new ThrottleThreshold(ZERO_THRESHOLD);
     private BrakeThreshold brakeThreshold = new BrakeThreshold(ZERO_THRESHOLD);
     private State state = PARK;
     private Mode mode = COMFORT;
 
     public static GearboxDriver powerUpGearbox(ExternalSystem externalSystems) {
-        val gearCalc = new GearCalculator(externalSystems);
-        val gearState = new GearboxState(externalSystems);
+        val gearboxCalc = new GearCalculator();
+        val gearboxState = new GearboxState();
         val gearbox = new Gearbox(MIN_GEAR_NUMBER, MAX_GEAR_NUMBER);
 
-        return new GearboxDriver(gearbox, gearCalc, gearState);
-    }
-
-    private void changeGear() {
-        val gear = gearCalculator.calculate()
-                .apply(mode, driverInput());
-
-        gearbox.changeGear(gear);
-    }
-
-    private DriverInput driverInput() {
-        return DriverInput.builder()
-                .throttleThreshold(throttleThreshold)
-                .brakeThreshold(brakeThreshold)
-                .state(state)
-                .mode(mode)
-                .build();
+        return new GearboxDriver(gearbox, gearboxCalc, gearboxState, externalSystems);
     }
 
     @Subscribe
@@ -61,14 +46,32 @@ public class GearboxDriver {
     }
 
     @Subscribe
-    public void onGearStickPositionChange(State state) {
-        this.state = gearboxState.change().apply(state, driverInput());
+    public void onGearStickPositionChange(State expectedState) {
+        this.state = this.gearboxState.change().apply(expectedState, vehicleStatusData());
+        changeGear();
     }
 
     @Subscribe
     public void onDriveModeChange(Mode mode) {
         this.mode = mode;
         changeGear();
+    }
+
+    private void changeGear() {
+        val gear = this.gearCalculator.calculate()
+                .apply(vehicleStatusData());
+
+        this.gearbox.changeGear(gear);
+    }
+
+    private VehicleStatusData vehicleStatusData() {
+        return VehicleStatusData.builder()
+                .throttleThreshold(this.throttleThreshold)
+                .brakeThreshold(this.brakeThreshold)
+                .state(this.state)
+                .mode(this.mode)
+                .externalSystem(this.externalSystem)
+                .build();
     }
 
     public State checkGearboxState() {

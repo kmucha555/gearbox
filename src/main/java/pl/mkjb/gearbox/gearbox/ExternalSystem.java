@@ -6,7 +6,7 @@ import pl.mkjb.gearbox.external.shared.LinearSpeed;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 
 @Getter
-public class ExternalSystem {
+class ExternalSystem {
     private RevGauge revGauge;
     private LinearSpeed linearSpeed;
 

@@ -16,12 +16,9 @@ import static pl.mkjb.gearbox.settings.Setting.ZERO_THRESHOLD;
 import static pl.mkjb.gearbox.settings.State.*;
 
 class GearboxState {
-    private final ExternalSystem externalSystem;
-    private final Map<State, Function1<DriverInput, State>> states;
+    private final Map<State, Function1<VehicleStatusData, State>> states;
 
-    public GearboxState(ExternalSystem externalSystem) {
-
-        this.externalSystem = externalSystem;
+    public GearboxState() {
         this.states = HashMap.of(
                 PARK, park(),
                 REVERSE, reverse(),
@@ -30,35 +27,35 @@ class GearboxState {
         );
     }
 
-    public Function2<State, DriverInput, State> change() {
-        return (newState, driverInput) ->
+    public Function2<State, VehicleStatusData, State> change() {
+        return (newState, vehicleStatusData) ->
                 states.get(newState)
-                        .map(tryChangeToNewState -> tryChangeToNewState.apply(driverInput))
+                        .map(tryChangeToNewState -> tryChangeToNewState.apply(vehicleStatusData))
                         .getOrElseThrow(() -> new IllegalArgumentException("Unknown gearbox state"));
     }
 
-    private Function1<DriverInput, State> park() {
-        return driverInput -> Option.of(driverInput.brakeThreshold)
+    private Function1<VehicleStatusData, State> park() {
+        return vehicleStatusData -> Option.of(vehicleStatusData.brakeThreshold)
                 .filter(isBrakeForceApplied())
-                .map(brakeThreshold -> externalSystem.getLinearSpeed())
+                .map(brakeThreshold -> vehicleStatusData.externalSystem.getLinearSpeed())
                 .filter(isVehicleStopped())
                 .map(linearSpeed -> PARK)
                 .getOrElseThrow(() -> new IllegalStateException("Can't change to park"));
     }
 
-    private Function1<DriverInput, State> neutral() {
-        return driverInput -> NEUTRAL;
+    private Function1<VehicleStatusData, State> neutral() {
+        return vehicleStatusData -> NEUTRAL;
     }
 
-    private Function1<DriverInput, State> drive() {
-        return driverInput -> Option.of(driverInput.brakeThreshold)
+    private Function1<VehicleStatusData, State> drive() {
+        return vehicleStatusData -> Option.of(vehicleStatusData.brakeThreshold)
                 .filter(isBrakeForceApplied())
                 .map(brakeThreshold -> DRIVE)
                 .getOrElseThrow(() -> new IllegalStateException("Can't change to drive"));
     }
 
-    private Function1<DriverInput, State> reverse() {
-        return driverInput -> Option.of(driverInput.brakeThreshold)
+    private Function1<VehicleStatusData, State> reverse() {
+        return vehicleStatusData -> Option.of(vehicleStatusData.brakeThreshold)
                 .filter(isBrakeForceApplied())
                 .map(brakeThreshold -> REVERSE)
                 .getOrElseThrow(() -> new IllegalStateException("Can't change to reverse"));

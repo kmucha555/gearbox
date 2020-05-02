@@ -7,9 +7,10 @@ import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
 
 @Builder
-class DriverInput {
+class VehicleStatusData {
     public final ThrottleThreshold throttleThreshold;
     public final BrakeThreshold brakeThreshold;
     public final State state;
     public final Mode mode;
+    public final ExternalSystem externalSystem;
 }

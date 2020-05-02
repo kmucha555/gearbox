@@ -16,7 +16,7 @@ class BrakeThresholdSpec extends Specification {
         input          | output
         ZERO_THRESHOLD | ZERO_THRESHOLD
         HALF_THRESHOLD | HALF_THRESHOLD
-        MAX_THRESHOLD  | MAX_THRESHOLD
+        MAX_THRESHOLD | MAX_THRESHOLD
     }
 
     @Unroll
