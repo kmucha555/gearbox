@@ -7,11 +7,9 @@ import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 import pl.mkjb.gearbox.external.shared.LinearSpeed;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
-import pl.mkjb.gearbox.settings.State;
 import pl.mkjb.gearbox.settings.Mode;
+import pl.mkjb.gearbox.settings.State;
 
-import static pl.mkjb.gearbox.settings.State.PARK;
-import static pl.mkjb.gearbox.settings.Mode.COMFORT;
 import static pl.mkjb.gearbox.settings.Setting.*;
 
 @Builder(access = AccessLevel.PRIVATE)
@@ -37,11 +35,9 @@ public class ExternalFacade {
     }
 
     public void start() {
-        throttle.sendEvent(new ThrottleThreshold(MIN_THRESHOLD));
-        brake.sendEvent(new BrakeThreshold(MIN_THRESHOLD));
+        throttle.sendEvent(new ThrottleThreshold(ZERO_THRESHOLD));
+        brake.sendEvent(new BrakeThreshold(ZERO_THRESHOLD));
         engine.sendEvent(new RevGauge(IDLE_RPM));
         velocity.sendEvent(new LinearSpeed(NO_SPEED));
-        mode.sendEvent(COMFORT);
-        gearStick.sendEvent(PARK);
     }
 }

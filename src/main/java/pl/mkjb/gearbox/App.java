@@ -5,13 +5,15 @@ import lombok.val;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import pl.mkjb.gearbox.external.ExternalFacade;
+import pl.mkjb.gearbox.gearbox.ExternalSystem;
 import pl.mkjb.gearbox.gearbox.GearboxDriver;
 
 public class App {
     public static void main(String[] args) {
         Configurator.setLevel("pl.mkjb.gearbox", Level.INFO);
 
-        val gearboxDriver = GearboxDriver.powerUpGearbox();
+        val externalSystems = new ExternalSystem();
+        val gearboxDriver = GearboxDriver.powerUpGearbox(externalSystems);
 
         val eventBus = new EventBus();
         val externalFacade = ExternalFacade.connectExternalSystem(eventBus);

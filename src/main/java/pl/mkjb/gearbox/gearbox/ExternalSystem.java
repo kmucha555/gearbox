@@ -1,10 +1,12 @@
 package pl.mkjb.gearbox.gearbox;
 
 import com.google.common.eventbus.Subscribe;
+import lombok.Getter;
 import pl.mkjb.gearbox.external.shared.LinearSpeed;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 
-class ExternalSystem {
+@Getter
+public class ExternalSystem {
     private RevGauge revGauge;
     private LinearSpeed linearSpeed;
 

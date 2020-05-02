@@ -1,11 +1,15 @@
 package pl.mkjb.gearbox.settings;
 
-public class Setting {
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class Setting {
     public static final int UP_SHIFT = 1;
     public static final int DOWN_SHIFT = -1;
     public static final int KICK_DOWN = -2;
 
-    public static final int MIN_THRESHOLD = 0;
+    public static final int ZERO_THRESHOLD = 0;
     public static final int HALF_THRESHOLD = 50;
     public static final int MAX_THRESHOLD = 100;
 
@@ -18,6 +22,7 @@ public class Setting {
 
     public static final int MIN_LINEAR_SPEED = -50;
     public static final int NO_SPEED = 0;
+    public static final int SOME_SPEED = 50;
     public static final int MAX_LINEAR_SPEED = 250;
 
 }

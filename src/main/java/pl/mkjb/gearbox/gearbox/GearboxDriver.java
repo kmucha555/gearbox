@@ -3,32 +3,30 @@ package pl.mkjb.gearbox.gearbox;
 import com.google.common.eventbus.Subscribe;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
-import pl.mkjb.gearbox.settings.State;
+import pl.mkjb.gearbox.gearbox.shared.Gear;
 import pl.mkjb.gearbox.settings.Mode;
+import pl.mkjb.gearbox.settings.State;
 
-import static pl.mkjb.gearbox.settings.State.PARK;
 import static pl.mkjb.gearbox.settings.Mode.COMFORT;
 import static pl.mkjb.gearbox.settings.Setting.*;
+import static pl.mkjb.gearbox.settings.State.PARK;
 
-@Log4j2
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class GearboxDriver {
     private final Gearbox gearbox;
     private final GearCalculator gearCalculator;
     private final GearboxState gearboxState;
-    private ThrottleThreshold throttleThreshold = new ThrottleThreshold(MIN_THRESHOLD);
-    private BrakeThreshold brakeThreshold = new BrakeThreshold(MIN_THRESHOLD);
+    private ThrottleThreshold throttleThreshold = new ThrottleThreshold(ZERO_THRESHOLD);
+    private BrakeThreshold brakeThreshold = new BrakeThreshold(ZERO_THRESHOLD);
     private State state = PARK;
     private Mode mode = COMFORT;
 
-    public static GearboxDriver powerUpGearbox() {
-        val externalSystems = new ExternalSystem();
+    public static GearboxDriver powerUpGearbox(ExternalSystem externalSystems) {
         val gearCalc = new GearCalculator(externalSystems);
-        var gearState = new GearboxState(externalSystems);
+        val gearState = new GearboxState(externalSystems);
         val gearbox = new Gearbox(MIN_GEAR_NUMBER, MAX_GEAR_NUMBER);
 
         return new GearboxDriver(gearbox, gearCalc, gearState);
@@ -64,13 +62,20 @@ public class GearboxDriver {
 
     @Subscribe
     public void onGearStickPositionChange(State state) {
-        this.state = state;
-        changeGear();
+        this.state = gearboxState.change().apply(state, driverInput());
     }
 
     @Subscribe
     public void onDriveModeChange(Mode mode) {
         this.mode = mode;
         changeGear();
+    }
+
+    public State checkGearboxState() {
+        return this.state;
+    }
+
+    public Gear checkGearboxGear() {
+        return this.gearbox.getCurrentGear();
     }
 }
