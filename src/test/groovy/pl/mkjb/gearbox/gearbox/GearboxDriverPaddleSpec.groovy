@@ -2,6 +2,7 @@ package pl.mkjb.gearbox.gearbox
 
 import pl.mkjb.gearbox.PreparedInput
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
     Gearbox gearbox = Mock()
@@ -11,7 +12,8 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         gearboxDriver = GearboxDriver.powerUpGearbox(gearbox)
     }
 
-    def "should upshift one gear using paddles"() {
+    @Unroll
+    def "should upshift from #input to #output using paddles"() {
         given:
         gearbox.currentGear() >> input
         changeToDrive(gearboxDriver)
@@ -28,7 +30,8 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         thirdGear | fourthGear
     }
 
-    def "should not upshift when gearbox is on max gear using paddles"() {
+    @Unroll
+    def "should not upshift when gearbox is on max #input.gear th gear using paddles"() {
         given:
         gearbox.currentGear() >> input
         changeToDrive(gearboxDriver)
@@ -44,7 +47,8 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         maxGear | maxGear
     }
 
-    def "should downshift one gear using paddles"() {
+    @Unroll
+    def "should downshift one gear from #input to #output using paddles"() {
         given:
         gearbox.currentGear() >> input
         changeToDrive(gearboxDriver)

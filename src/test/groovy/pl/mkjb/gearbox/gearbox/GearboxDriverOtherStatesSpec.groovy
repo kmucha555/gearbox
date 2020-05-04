@@ -2,6 +2,7 @@ package pl.mkjb.gearbox.gearbox
 
 import pl.mkjb.gearbox.PreparedInput
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import static pl.mkjb.gearbox.settings.Mode.*
 import static pl.mkjb.gearbox.settings.State.*
@@ -17,7 +18,8 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
         gearboxDriver.onGearStickPositionChange(PARK)
     }
 
-    def "should change gear to reverse no matter which drive mode is active"() {
+    @Unroll
+    def "should change gear to reverse no matter which drive mode is active (#input)"() {
 
         given: "applying drive mode"
         gearboxDriver.onDriveModeChange(input)
@@ -38,7 +40,8 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
         SPORT      | reverseGear
     }
 
-    def "should change gear to neutral no matter which drive mode is active"() {
+    @Unroll
+    def "should change gear to neutral no matter which drive mode is active (#input)"() {
 
         given: "applying drive mode"
         gearboxDriver.onDriveModeChange(input)
@@ -59,7 +62,8 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
         SPORT      | neutralGear
     }
 
-    def "should change gear to park no matter which drive mode is active"() {
+    @Unroll
+    def "should change gear to park no matter which drive mode is active (#input)"() {
 
         given: "applying drive mode"
         gearboxDriver.onDriveModeChange(input)
