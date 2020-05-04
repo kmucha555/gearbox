@@ -11,6 +11,7 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
     def gearboxDriver
 
     def setup(){
+        gearbox.currentGear() >> neutralGear
         gearboxDriver = GearboxDriver.powerUpGearbox(gearbox)
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(PARK)

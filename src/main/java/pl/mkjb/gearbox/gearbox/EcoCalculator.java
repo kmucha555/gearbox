@@ -1,9 +1,7 @@
 package pl.mkjb.gearbox.gearbox;
 
 import io.vavr.Function1;
-import io.vavr.Function2;
-import lombok.val;
-import pl.mkjb.gearbox.gearbox.shared.Gear;
+import io.vavr.Predicates;
 
 import java.util.function.Predicate;
 
@@ -16,33 +14,51 @@ final class EcoCalculator implements Calculator {
     private static final int DOWNSHIFT_WHILE_BRAKING = 1500;
 
     @Override
-    public Function1<VehicleStatusData, Gear> calculate() {
+    public Function1<VehicleStatusData, Integer> calculate() {
         return vehicleStatusData -> {
 
-            if (isThrottleApplied().test(vehicleStatusData)) {
-
-                if (vehicleStatusData.revGauge.actualRevs <= DOWNSHIFT_REVS) {
-                    return newGear().apply(vehicleStatusData, DOWNSHIFT);
-                }
-
-                if (vehicleStatusData.revGauge.actualRevs >= UPSHIFT_REVS) {
-                    return newGear().apply(vehicleStatusData, UPSHIFT);
-                }
-
-                return newGear().apply(vehicleStatusData, NO_GEAR_CHANGE);
+            if (isThrottleAppliedAndRevsAreOverUpshiftLimit(vehicleStatusData)) {
+                return UPSHIFT;
             }
 
-            if (isBrakeForceApplied().test(vehicleStatusData)) {
-
-                if (vehicleStatusData.revGauge.actualRevs <= DOWNSHIFT_WHILE_BRAKING) {
-                    return newGear().apply(vehicleStatusData, DOWNSHIFT);
-                }
-
-                return newGear().apply(vehicleStatusData, NO_GEAR_CHANGE);
+            if (isThrottleAppliedAndRevsAreBelowDownshiftLimit(vehicleStatusData)) {
+                return DOWNSHIFT;
             }
 
-            return newGear().apply(vehicleStatusData, FIRST_GEAR);
+            if (isBrakeAppliedAndRevsAreBelowDownShiftWhileBrakingLimit(vehicleStatusData)) {
+                return DOWNSHIFT;
+            }
+
+            if (isThrottleAppliedAndRevsAreBetweenUpAndDownShiftLimits(vehicleStatusData)) {
+                return NO_GEAR_CHANGE;
+            }
+
+            if (isBrakeAppliedAndRevsAreOverDownshiftWhileBrakingLimit(vehicleStatusData)) {
+                return NO_GEAR_CHANGE;
+            }
+
+            return FIRST_GEAR;
         };
+    }
+
+    private boolean isThrottleAppliedAndRevsAreOverUpshiftLimit(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isThrottleApplied(), shouldUpShift()).test(vehicleStatusData);
+    }
+
+    private boolean isThrottleAppliedAndRevsAreBelowDownshiftLimit(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isThrottleApplied(), shouldDownShift()).test(vehicleStatusData);
+    }
+
+    private boolean isBrakeAppliedAndRevsAreBelowDownShiftWhileBrakingLimit(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isBrakeForceApplied(), shouldDownShiftWhileBraking()).test(vehicleStatusData);
+    }
+
+    private boolean isThrottleAppliedAndRevsAreBetweenUpAndDownShiftLimits(VehicleStatusData vehicleStatusData) {
+        return isThrottleApplied().and(Predicates.noneOf(shouldDownShift(), shouldUpShift())).test(vehicleStatusData);
+    }
+
+    private boolean isBrakeAppliedAndRevsAreOverDownshiftWhileBrakingLimit(VehicleStatusData vehicleStatusData) {
+        return isBrakeForceApplied().and(Predicates.noneOf(shouldDownShiftWhileBraking())).test(vehicleStatusData);
     }
 
     private Predicate<VehicleStatusData> isThrottleApplied() {
@@ -53,13 +69,15 @@ final class EcoCalculator implements Calculator {
         return vehicleStatusData -> vehicleStatusData.brakeThreshold.level > ZERO_THRESHOLD;
     }
 
-    private Function2<VehicleStatusData, Integer, Gear> newGear() {
-        return (vehicleStatusData, gearChangeScope) -> {
-            val newGear = vehicleStatusData.currentGear.gear + gearChangeScope;
-            if (newGear < FIRST_GEAR || newGear > MAX_GEAR_NUMBER) {
-                return new Gear(vehicleStatusData.currentGear.gear);
-            }
-            return new Gear(newGear);
-        };
+    private Predicate<VehicleStatusData> shouldUpShift() {
+        return vehicleStatusData -> vehicleStatusData.revGauge.actualRevs >= UPSHIFT_REVS;
+    }
+
+    private Predicate<VehicleStatusData> shouldDownShift() {
+        return vehicleStatusData -> vehicleStatusData.revGauge.actualRevs <= DOWNSHIFT_REVS;
+    }
+
+    private Predicate<VehicleStatusData> shouldDownShiftWhileBraking() {
+        return vehicleStatusData -> vehicleStatusData.revGauge.actualRevs <= DOWNSHIFT_WHILE_BRAKING;
     }
 }

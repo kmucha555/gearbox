@@ -1,14 +1,17 @@
 package pl.mkjb.gearbox.gearbox;
 
 import io.vavr.Function1;
+import io.vavr.Function2;
+import lombok.val;
 import pl.mkjb.gearbox.gearbox.shared.Gear;
 import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
 
+import java.util.function.Predicate;
+
 import static io.vavr.API.*;
 import static pl.mkjb.gearbox.settings.Mode.*;
-import static pl.mkjb.gearbox.settings.Setting.NEUTRAL_GEAR;
-import static pl.mkjb.gearbox.settings.Setting.REVERSE_GEAR;
+import static pl.mkjb.gearbox.settings.Setting.*;
 import static pl.mkjb.gearbox.settings.State.*;
 
 class GearCalculator {
@@ -24,13 +27,24 @@ class GearCalculator {
 
     public Function1<VehicleStatusData, Gear> calculate() {
         return vehicleStatusData ->
-                selectGearboxState()
+                newGear().apply(vehicleStatusData, selectGearboxState()
                         .apply(vehicleStatusData.state)
                         .apply(vehicleStatusData.mode)
-                        .apply(vehicleStatusData);
+                        .apply(vehicleStatusData));
     }
 
-    private Function1<State, Function1<Mode, Function1<VehicleStatusData, Gear>>> selectGearboxState() {
+    private Function2<VehicleStatusData, Integer, Gear> newGear() {
+        return (vehicleStatusData, gearChangeScope) -> {
+            val newGear = vehicleStatusData.currentGear.gear + gearChangeScope;
+
+            if (isInDrive().test(vehicleStatusData) && isValidGear().test(newGear)) {
+                return new Gear(vehicleStatusData.currentGear.gear);
+            }
+            return new Gear(newGear);
+        };
+    }
+
+    private Function1<State, Function1<Mode, Function1<VehicleStatusData, Integer>>> selectGearboxState() {
         return state -> Match(state).of(
                 Case($(DRIVE), drive()),
                 Case($(PARK), park()),
@@ -38,22 +52,30 @@ class GearCalculator {
                 Case($(REVERSE), reverse()));
     }
 
-    private Function1<Mode, Function1<VehicleStatusData, Gear>> drive() {
+    private Function1<Mode, Function1<VehicleStatusData, Integer>> drive() {
         return mode -> Match(mode).of(
                 Case($(ECO), ecoCalculator.calculate()),
                 Case($(COMFORT), comfortCalculator.calculate()),
                 Case($(SPORT), sportCalculator.calculate()));
     }
 
-    private Function1<Mode, Function1<VehicleStatusData, Gear>> park() {
-        return mode -> vehicleStatusData -> new Gear(NEUTRAL_GEAR);
+    private Function1<Mode, Function1<VehicleStatusData, Integer>> park() {
+        return mode -> vehicleStatusData -> NEUTRAL_GEAR;
     }
 
-    private Function1<Mode, Function1<VehicleStatusData, Gear>> neutral() {
-        return mode -> vehicleStatusData -> new Gear(NEUTRAL_GEAR);
+    private Function1<Mode, Function1<VehicleStatusData, Integer>> neutral() {
+        return mode -> vehicleStatusData -> NEUTRAL_GEAR;
     }
 
-    private Function1<Mode, Function1<VehicleStatusData, Gear>> reverse() {
-        return mode -> vehicleStatusData -> new Gear(REVERSE_GEAR);
+    private Function1<Mode, Function1<VehicleStatusData, Integer>> reverse() {
+        return mode -> vehicleStatusData -> REVERSE_GEAR;
+    }
+
+    private Predicate<VehicleStatusData> isInDrive() {
+        return vehicleStatusData -> vehicleStatusData.state.equals(DRIVE);
+    }
+
+    private Predicate<Integer> isValidGear() {
+        return newGear -> newGear < FIRST_GEAR || newGear > MAX_GEAR_NUMBER;
     }
 }
