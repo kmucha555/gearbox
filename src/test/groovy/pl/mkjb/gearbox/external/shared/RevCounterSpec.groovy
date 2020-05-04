@@ -16,7 +16,7 @@ class RevCounterSpec extends Specification {
         input    | output
         ZERO_RPM | ZERO_RPM
         IDLE_RPM | IDLE_RPM
-        MAX_RPM  | MAX_RPM
+        HIGH_RPM | HIGH_RPM
     }
 
     @Unroll

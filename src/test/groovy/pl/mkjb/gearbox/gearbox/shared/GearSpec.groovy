@@ -10,7 +10,7 @@ class GearSpec extends Specification {
     @Unroll
     def "should return given gear"() {
         expect:
-        new Gear(input).newGear == output
+        new Gear(input).gear == output
 
         where:
         input           | output

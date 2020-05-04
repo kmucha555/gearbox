@@ -39,7 +39,7 @@ public class GearboxDriver {
         changeGear();
     }
 
-    @Subscribe
+    @Subscribee
     public void onBrakeApplied(BrakeThreshold brakeThreshold) {
         this.brakeThreshold = brakeThreshold;
         changeGear();
@@ -70,6 +70,7 @@ public class GearboxDriver {
                 .brakeThreshold(this.brakeThreshold)
                 .state(this.state)
                 .mode(this.mode)
+                .currentGear(checkGearboxGear())
                 .externalSystem(this.externalSystem)
                 .build();
     }

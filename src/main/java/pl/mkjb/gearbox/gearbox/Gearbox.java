@@ -10,7 +10,7 @@ class Gearbox {
     private int currentGear = 0;
 
     public void changeGear(Gear gear) {
-        this.currentGear = gear.newGear;
+        this.currentGear = gear.gear;
     }
 
     public Gear getCurrentGear() {

@@ -16,7 +16,7 @@ class ThrottleThresholdSpec extends Specification {
         where:
         input         | output
         ZERO_THRESHOLD | ZERO_THRESHOLD
-        HALF_THRESHOLD | HALF_THRESHOLD
+        DOUBLE_KICK_DOWN_THRESHOLD | DOUBLE_KICK_DOWN_THRESHOLD
         MAX_THRESHOLD | MAX_THRESHOLD
     }
 
