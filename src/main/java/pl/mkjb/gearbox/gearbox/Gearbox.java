@@ -13,7 +13,7 @@ class Gearbox {
         this.currentGear = gear.gear;
     }
 
-    public Gear getCurrentGear() {
+    public Gear currentGear() {
         return new Gear(currentGear);
     }
 

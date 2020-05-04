@@ -7,10 +7,11 @@ import static pl.mkjb.gearbox.settings.State.DRIVE
 import static pl.mkjb.gearbox.settings.State.PARK
 
 class GearboxStatePark2DriveSpec extends Specification implements PreparedInput {
+    Gearbox gearbox = Stub()
     def gearboxDriver
 
     def setup() {
-        gearboxDriver = GearboxDriver.powerUpGearbox()
+        gearboxDriver = GearboxDriver.powerUpGearbox(gearbox)
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(PARK)
     }

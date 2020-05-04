@@ -12,6 +12,8 @@ public final class Setting {
     public static final int NEUTRAL_GEAR = 0;
     public static final int FIRST_GEAR = 1;
     public static final int SECOND_GEAR = 2;
+    public static final int THIRD_GEAR = 3;
+    public static final int FOURTH_GEAR = 4;
     public static final int REVERSE_GEAR = -1;
 
     public static final int ZERO_THRESHOLD = 0;
@@ -24,9 +26,10 @@ public final class Setting {
 
     public static final int ZERO_RPM = 0;
     public static final int IDLE_RPM = 750;
-    public static final int LOW_RPM = 2500;
-    public static final int MEDIUM_RPM = 5000;
-    public static final int HIGH_RPM = 7000;
+    public static final int VERY_LOW_RPM = 1000;
+    public static final int LOW_RPM = 1500;
+    public static final int MEDIUM_RPM = 3000;
+    public static final int HIGH_RPM = 5000;
 
     public static final int MIN_LINEAR_SPEED = -50;
     public static final int NO_SPEED = 0;

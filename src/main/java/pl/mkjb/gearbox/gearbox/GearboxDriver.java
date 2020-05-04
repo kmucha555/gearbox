@@ -28,10 +28,9 @@ public class GearboxDriver {
     private State state = PARK;
     private Mode mode = COMFORT;
 
-    public static GearboxDriver powerUpGearbox() {
+    public static GearboxDriver powerUpGearbox(Gearbox gearbox) {
         val gearboxCalc = new GearCalculator();
         val gearboxState = new GearboxState();
-        val gearbox = new Gearbox(MIN_GEAR_NUMBER, MAX_GEAR_NUMBER);
 
         return new GearboxDriver(gearbox, gearboxCalc, gearboxState);
     }
@@ -51,16 +50,19 @@ public class GearboxDriver {
     @Subscribe
     public void onDriveModeChange(Mode mode) {
         this.mode = mode;
+        changeGear();
     }
 
     @Subscribe
     public void onThrottleChange(ThrottleThreshold throttleThreshold) {
         this.throttleThreshold = throttleThreshold;
+        changeGear();
     }
 
     @Subscribe
     public void onBrakeApplied(BrakeThreshold brakeThreshold) {
         this.brakeThreshold = brakeThreshold;
+        changeGear();
     }
 
     @Subscribe
@@ -92,6 +94,6 @@ public class GearboxDriver {
     }
 
     public Gear checkGearboxGear() {
-        return this.gearbox.getCurrentGear();
+        return this.gearbox.currentGear();
     }
 }
