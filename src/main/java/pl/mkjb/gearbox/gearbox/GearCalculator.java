@@ -15,13 +15,11 @@ class GearCalculator {
     private final Calculator ecoCalculator;
     private final Calculator comfortCalculator;
     private final Calculator sportCalculator;
-    private final Calculator sportPlusCalculator;
 
     public GearCalculator() {
         this.ecoCalculator = new EcoCalculator();
         this.comfortCalculator = new ComfortCalculator();
         this.sportCalculator = new SportCalculator();
-        this.sportPlusCalculator = new SportPlusEcoCalculator();
     }
 
     public Function1<VehicleStatusData, Gear> calculate() {
@@ -44,8 +42,7 @@ class GearCalculator {
         return mode -> Match(mode).of(
                 Case($(ECO), ecoCalculator.calculate()),
                 Case($(COMFORT), comfortCalculator.calculate()),
-                Case($(SPORT), sportCalculator.calculate()),
-                Case($(SPORT_PLUS), sportPlusCalculator.calculate()));
+                Case($(SPORT), sportCalculator.calculate()));
     }
 
     private Function1<Mode, Function1<VehicleStatusData, Gear>> park() {

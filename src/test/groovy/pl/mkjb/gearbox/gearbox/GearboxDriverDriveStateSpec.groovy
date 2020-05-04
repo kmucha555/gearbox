@@ -36,7 +36,6 @@ class GearboxDriverDriveStateSpec extends Specification implements PreparedInput
         ECO        | firstGear
         COMFORT    | firstGear
         SPORT      | firstGear
-        SPORT_PLUS | firstGear
     }
 
     @Unroll

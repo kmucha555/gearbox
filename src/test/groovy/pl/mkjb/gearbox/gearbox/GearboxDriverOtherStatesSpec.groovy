@@ -3,10 +3,7 @@ package pl.mkjb.gearbox.gearbox
 import pl.mkjb.gearbox.PreparedInput
 import spock.lang.Specification
 
-import static pl.mkjb.gearbox.settings.Mode.COMFORT
-import static pl.mkjb.gearbox.settings.Mode.ECO
-import static pl.mkjb.gearbox.settings.Mode.SPORT
-import static pl.mkjb.gearbox.settings.Mode.SPORT_PLUS
+import static pl.mkjb.gearbox.settings.Mode.*
 import static pl.mkjb.gearbox.settings.State.*
 
 class GearboxDriverOtherStatesSpec extends Specification implements PreparedInput {
@@ -38,7 +35,6 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
         ECO        | reverseGear
         COMFORT    | reverseGear
         SPORT      | reverseGear
-        SPORT_PLUS | reverseGear
     }
 
     def "should change gear to neutral no matter which drive mode is active"() {
@@ -60,7 +56,6 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
         ECO        | neutralGear
         COMFORT    | neutralGear
         SPORT      | neutralGear
-        SPORT_PLUS | neutralGear
     }
 
     def "should change gear to park no matter which drive mode is active"() {
@@ -82,6 +77,5 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
         ECO        | neutralGear
         COMFORT    | neutralGear
         SPORT      | neutralGear
-        SPORT_PLUS | neutralGear
     }
 }
