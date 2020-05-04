@@ -23,6 +23,8 @@ trait PreparedInput {
     Gear thirdGear = new Gear(THIRD_GEAR)
     Gear fourthGear = new Gear(FOURTH_GEAR)
     Gear maxGear = new Gear(MAX_GEAR_NUMBER)
+    Gear upshift = new Gear(UPSHIFT)
+    Gear downshift = new Gear(DOWNSHIFT)
 
     LinearSpeed zeroLinearSpeed = new LinearSpeed(NO_SPEED)
     LinearSpeed someLinearSpeed = new LinearSpeed(SOME_SPEED)

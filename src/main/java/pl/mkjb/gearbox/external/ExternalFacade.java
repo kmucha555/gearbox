@@ -7,6 +7,7 @@ import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 import pl.mkjb.gearbox.external.shared.LinearSpeed;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
+import pl.mkjb.gearbox.gearbox.shared.Gear;
 import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
 
@@ -21,6 +22,7 @@ public final class ExternalFacade {
     private final Component<State> gearStick;
     private final Component<LinearSpeed> velocity;
     private final Component<Mode> mode;
+    private final Component<Gear> paddle;
 
     public static ExternalFacade connectExternalSystem(EventBus eventBus) {
         return ExternalFacade.builder()
@@ -31,6 +33,7 @@ public final class ExternalFacade {
                 .gearStick(new GearStick(eventBus))
                 .velocity(new Velocity(eventBus))
                 .mode(new DriveMode(eventBus))
+                .paddle(new Paddle(eventBus))
                 .build();
     }
 

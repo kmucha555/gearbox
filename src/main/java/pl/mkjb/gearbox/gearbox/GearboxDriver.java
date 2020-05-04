@@ -14,6 +14,7 @@ import pl.mkjb.gearbox.settings.State;
 
 import static pl.mkjb.gearbox.settings.Mode.COMFORT;
 import static pl.mkjb.gearbox.settings.Setting.*;
+import static pl.mkjb.gearbox.settings.State.DRIVE;
 import static pl.mkjb.gearbox.settings.State.PARK;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -70,9 +71,19 @@ public final class GearboxDriver {
         this.linearSpeed = linearSpeed;
     }
 
+    @Subscribe
+    public void onPaddleUse(Gear gearChangeScope) {
+        if (this.state == DRIVE) {
+            val newGear = this.gearbox.currentGear().gear + gearChangeScope.gear;
+            if (isValidGear(newGear)) {
+                this.gearbox.changeGear(new Gear(newGear));
+            }
+        }
+    }
+
     private void changeGear() {
-        val gear = this.gearCalculator.calculate().apply(vehicleStatusData());
-        this.gearbox.changeGear(gear);
+        val newGear = this.gearCalculator.calculate().apply(vehicleStatusData());
+        this.gearbox.changeGear(newGear);
     }
 
     private VehicleStatusData vehicleStatusData() {
@@ -93,5 +104,9 @@ public final class GearboxDriver {
 
     public Gear checkGearboxGear() {
         return this.gearbox.currentGear();
+    }
+
+    private boolean isValidGear(int gear) {
+        return gear >= FIRST_GEAR && gear <= MAX_GEAR_NUMBER;
     }
 }

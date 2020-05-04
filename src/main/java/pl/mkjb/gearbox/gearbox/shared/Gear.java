@@ -2,13 +2,14 @@ package pl.mkjb.gearbox.gearbox.shared;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import pl.mkjb.gearbox.external.shared.Event;
 
 import static pl.mkjb.gearbox.settings.Setting.MAX_GEAR_NUMBER;
 import static pl.mkjb.gearbox.settings.Setting.MIN_GEAR_NUMBER;
 
 @EqualsAndHashCode
 @ToString
-public class Gear {
+public class Gear implements Event {
     public final int gear;
 
     public Gear(int gear) {
