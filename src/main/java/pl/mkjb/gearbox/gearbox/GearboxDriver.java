@@ -9,9 +9,11 @@ import pl.mkjb.gearbox.external.shared.LinearSpeed;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
 import pl.mkjb.gearbox.gearbox.shared.Gear;
+import pl.mkjb.gearbox.settings.AggressiveMode;
 import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
 
+import static pl.mkjb.gearbox.settings.AggressiveMode.SOFT;
 import static pl.mkjb.gearbox.settings.Mode.COMFORT;
 import static pl.mkjb.gearbox.settings.Setting.*;
 import static pl.mkjb.gearbox.settings.State.DRIVE;
@@ -28,6 +30,7 @@ public final class GearboxDriver {
     private LinearSpeed linearSpeed = new LinearSpeed(NO_SPEED);
     private State state = PARK;
     private Mode mode = COMFORT;
+    private AggressiveMode aggressiveMode = SOFT;
 
     public static GearboxDriver powerUpGearbox(Gearbox gearbox) {
         val gearboxCalc = new GearCalculator();
@@ -51,6 +54,12 @@ public final class GearboxDriver {
     @Subscribe
     public void onDriveModeChange(Mode mode) {
         this.mode = mode;
+        changeGear();
+    }
+
+    @Subscribe
+    public void onGearChangeMode(AggressiveMode aggressiveMode) {
+        this.aggressiveMode = aggressiveMode;
         changeGear();
     }
 
@@ -94,6 +103,7 @@ public final class GearboxDriver {
                 .linearSpeed(this.linearSpeed)
                 .state(this.state)
                 .mode(this.mode)
+                .aggressiveMode(this.aggressiveMode)
                 .currentGear(checkGearboxGear())
                 .build();
     }

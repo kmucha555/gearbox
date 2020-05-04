@@ -7,6 +7,7 @@ import pl.mkjb.gearbox.external.shared.LinearSpeed;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
 import pl.mkjb.gearbox.gearbox.shared.Gear;
+import pl.mkjb.gearbox.settings.AggressiveMode;
 import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
 
@@ -19,5 +20,6 @@ final class VehicleStatusData {
     public final LinearSpeed linearSpeed;
     public final State state;
     public final Mode mode;
+    public final AggressiveMode aggressiveMode;
     public final Gear currentGear;
 }
