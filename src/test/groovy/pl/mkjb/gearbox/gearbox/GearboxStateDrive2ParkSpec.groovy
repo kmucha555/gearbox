@@ -7,12 +7,10 @@ import static pl.mkjb.gearbox.settings.State.DRIVE
 import static pl.mkjb.gearbox.settings.State.PARK
 
 class GearboxStateDrive2ParkSpec extends Specification implements PreparedInput {
-    def externalSystem
     def gearboxDriver
 
     def setup() {
-        externalSystem = Stub(ExternalSystem)
-        gearboxDriver = GearboxDriver.powerUpGearbox(externalSystem)
+        gearboxDriver = GearboxDriver.powerUpGearbox()
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(DRIVE)
     }
@@ -21,7 +19,7 @@ class GearboxStateDrive2ParkSpec extends Specification implements PreparedInput 
 
         given: "some brake force is applied, zero velocity"
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
-        externalSystem.getLinearSpeed() >> zeroLinearSpeed
+        gearboxDriver.onLinearSpeedChange(zeroLinearSpeed)
 
         when:
         gearboxDriver.onGearStickPositionChange(PARK)
@@ -36,7 +34,7 @@ class GearboxStateDrive2ParkSpec extends Specification implements PreparedInput 
 
         given: "some brake force is applied, velocity > 0"
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
-        externalSystem.getLinearSpeed() >> someLinearSpeed
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
 
         when:
         gearboxDriver.onGearStickPositionChange(PARK)
@@ -49,7 +47,7 @@ class GearboxStateDrive2ParkSpec extends Specification implements PreparedInput 
 
         given: "no brake force is applied, velocity = 0"
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
-        externalSystem.getLinearSpeed() >> zeroLinearSpeed
+        gearboxDriver.onLinearSpeedChange(zeroLinearSpeed)
 
         when:
         gearboxDriver.onGearStickPositionChange(PARK)
@@ -62,7 +60,7 @@ class GearboxStateDrive2ParkSpec extends Specification implements PreparedInput 
 
         given: "no brake force is applied, velocity > 0"
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
-        externalSystem.getLinearSpeed() >> someLinearSpeed
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
 
         when:
         gearboxDriver.onGearStickPositionChange(PARK)

@@ -30,14 +30,14 @@ class GearboxState {
     public Function2<State, VehicleStatusData, State> change() {
         return (newState, vehicleStatusData) ->
                 states.get(newState)
-                        .map(tryChangeToNewState -> tryChangeToNewState.apply(vehicleStatusData))
+                        .map(changeToNewState -> changeToNewState.apply(vehicleStatusData))
                         .getOrElseThrow(() -> new IllegalArgumentException("Unknown gearbox state"));
     }
 
     private Function1<VehicleStatusData, State> park() {
-        return vehicleStatusData -> Option.of(vehicleStatusData.brakeThreshold)
+        return vehicleStatusData -> getBrakeThreshold().apply(vehicleStatusData)
                 .filter(isBrakeForceApplied())
-                .map(brakeThreshold -> vehicleStatusData.externalSystem.getLinearSpeed())
+                .map(brakeThreshold -> vehicleStatusData.linearSpeed)
                 .filter(isVehicleStopped())
                 .map(linearSpeed -> PARK)
                 .getOrElseThrow(() -> new IllegalStateException("Can't change to park"));
@@ -48,17 +48,21 @@ class GearboxState {
     }
 
     private Function1<VehicleStatusData, State> drive() {
-        return vehicleStatusData -> Option.of(vehicleStatusData.brakeThreshold)
+        return vehicleStatusData -> getBrakeThreshold().apply(vehicleStatusData)
                 .filter(isBrakeForceApplied())
                 .map(brakeThreshold -> DRIVE)
                 .getOrElseThrow(() -> new IllegalStateException("Can't change to drive"));
     }
 
     private Function1<VehicleStatusData, State> reverse() {
-        return vehicleStatusData -> Option.of(vehicleStatusData.brakeThreshold)
+        return vehicleStatusData -> getBrakeThreshold().apply(vehicleStatusData)
                 .filter(isBrakeForceApplied())
                 .map(brakeThreshold -> REVERSE)
                 .getOrElseThrow(() -> new IllegalStateException("Can't change to reverse"));
+    }
+
+    private Function1<VehicleStatusData, Option<BrakeThreshold>> getBrakeThreshold() {
+        return vehicleStatusData -> Option.of(vehicleStatusData.brakeThreshold);
     }
 
     private Predicate<BrakeThreshold> isBrakeForceApplied() {

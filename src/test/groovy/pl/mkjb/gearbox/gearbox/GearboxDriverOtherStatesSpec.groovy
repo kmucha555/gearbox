@@ -10,12 +10,10 @@ import static pl.mkjb.gearbox.settings.Mode.SPORT_PLUS
 import static pl.mkjb.gearbox.settings.State.*
 
 class GearboxDriverOtherStatesSpec extends Specification implements PreparedInput {
-    def externalSystem
     def gearboxDriver
 
     def setup(){
-        externalSystem = Stub(ExternalSystem)
-        gearboxDriver = GearboxDriver.powerUpGearbox(externalSystem)
+        gearboxDriver = GearboxDriver.powerUpGearbox()
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(PARK)
     }

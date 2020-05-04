@@ -6,12 +6,10 @@ import spock.lang.Specification
 import static pl.mkjb.gearbox.settings.State.PARK
 
 class GearboxStateSpec extends Specification implements PreparedInput {
-    def externalSystem
     def gearboxDriver
 
     def setup() {
-        externalSystem = Stub(ExternalSystem)
-        gearboxDriver = GearboxDriver.powerUpGearbox(externalSystem)
+        gearboxDriver = GearboxDriver.powerUpGearbox()
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(PARK)
     }

@@ -1,8 +1,11 @@
 package pl.mkjb.gearbox.external.shared;
 
+import lombok.ToString;
+
 import static pl.mkjb.gearbox.settings.Setting.MAX_THRESHOLD;
 import static pl.mkjb.gearbox.settings.Setting.ZERO_THRESHOLD;
 
+@ToString
 public class BrakeThreshold implements Event {
     public final int level;
 

@@ -1,10 +1,11 @@
 package pl.mkjb.gearbox.gearbox;
 
-import lombok.val;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GearboxFacade {
     public static GearboxDriver run() {
-        val externalSystems = new ExternalSystem();
-        return GearboxDriver.powerUpGearbox(externalSystems);
+        return GearboxDriver.powerUpGearbox();
     }
 }

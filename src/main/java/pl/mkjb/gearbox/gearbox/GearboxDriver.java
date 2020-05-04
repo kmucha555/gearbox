@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import pl.mkjb.gearbox.external.shared.BrakeThreshold;
+import pl.mkjb.gearbox.external.shared.LinearSpeed;
+import pl.mkjb.gearbox.external.shared.RevGauge;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
 import pl.mkjb.gearbox.gearbox.shared.Gear;
 import pl.mkjb.gearbox.settings.Mode;
@@ -19,29 +21,24 @@ public class GearboxDriver {
     private final Gearbox gearbox;
     private final GearCalculator gearCalculator;
     private final GearboxState gearboxState;
-    private final ExternalSystem externalSystem;
     private ThrottleThreshold throttleThreshold = new ThrottleThreshold(ZERO_THRESHOLD);
     private BrakeThreshold brakeThreshold = new BrakeThreshold(ZERO_THRESHOLD);
+    private RevGauge revGauge = new RevGauge(IDLE_RPM);
+    private LinearSpeed linearSpeed = new LinearSpeed(NO_SPEED);
     private State state = PARK;
     private Mode mode = COMFORT;
 
-    public static GearboxDriver powerUpGearbox(ExternalSystem externalSystems) {
+    public static GearboxDriver powerUpGearbox() {
         val gearboxCalc = new GearCalculator();
         val gearboxState = new GearboxState();
         val gearbox = new Gearbox(MIN_GEAR_NUMBER, MAX_GEAR_NUMBER);
 
-        return new GearboxDriver(gearbox, gearboxCalc, gearboxState, externalSystems);
+        return new GearboxDriver(gearbox, gearboxCalc, gearboxState);
     }
 
     @Subscribe
-    public void onThrottleChange(ThrottleThreshold throttleThreshold) {
-        this.throttleThreshold = throttleThreshold;
-        changeGear();
-    }
-
-    @Subscribee
-    public void onBrakeApplied(BrakeThreshold brakeThreshold) {
-        this.brakeThreshold = brakeThreshold;
+    public void onEngineRevsChange(RevGauge revGauge) {
+        this.revGauge = revGauge;
         changeGear();
     }
 
@@ -54,7 +51,21 @@ public class GearboxDriver {
     @Subscribe
     public void onDriveModeChange(Mode mode) {
         this.mode = mode;
-        changeGear();
+    }
+
+    @Subscribe
+    public void onThrottleChange(ThrottleThreshold throttleThreshold) {
+        this.throttleThreshold = throttleThreshold;
+    }
+
+    @Subscribe
+    public void onBrakeApplied(BrakeThreshold brakeThreshold) {
+        this.brakeThreshold = brakeThreshold;
+    }
+
+    @Subscribe
+    public void onLinearSpeedChange(LinearSpeed linearSpeed) {
+        this.linearSpeed = linearSpeed;
     }
 
     private void changeGear() {
@@ -66,12 +77,13 @@ public class GearboxDriver {
 
     private VehicleStatusData vehicleStatusData() {
         return VehicleStatusData.builder()
-                .throttleThreshold(this.throttleThreshold)
-                .brakeThreshold(this.brakeThreshold)
+                .throttleThreshold(throttleThreshold)
+                .brakeThreshold(brakeThreshold)
+                .revGauge(this.revGauge)
+                .linearSpeed(this.linearSpeed)
                 .state(this.state)
                 .mode(this.mode)
                 .currentGear(checkGearboxGear())
-                .externalSystem(this.externalSystem)
                 .build();
     }
 

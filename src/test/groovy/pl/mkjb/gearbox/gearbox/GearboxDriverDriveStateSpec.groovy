@@ -9,12 +9,10 @@ import static pl.mkjb.gearbox.settings.State.DRIVE
 import static pl.mkjb.gearbox.settings.State.PARK
 
 class GearboxDriverDriveStateSpec extends Specification implements PreparedInput {
-    def externalSystem
     def gearboxDriver
 
     def setup() {
-        externalSystem = Stub(ExternalSystem)
-        gearboxDriver = GearboxDriver.powerUpGearbox(externalSystem)
+        gearboxDriver = GearboxDriver.powerUpGearbox()
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(PARK)
     }
@@ -45,7 +43,7 @@ class GearboxDriverDriveStateSpec extends Specification implements PreparedInput
         gearboxDriver.onDriveModeChange(ECO)
         gearboxDriver.onGearStickPositionChange(DRIVE)
         gearboxDriver.onThrottleChange(input)
-        externalSystem.onEngineRevsChange(lowRpm)
+        gearboxDriver.onEngineRevsChange(lowRpm)
 
         then:
         gearboxDriver.checkGearboxGear() == output

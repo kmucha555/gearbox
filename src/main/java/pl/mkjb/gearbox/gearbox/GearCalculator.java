@@ -76,16 +76,24 @@ class GearCalculator {
 
     private BiPredicate<VehicleStatusData, Integer> isGearChangeRevs() {
         return (vehicleStatusData, gearChangeRevs) ->
-                vehicleStatusData.externalSystem.getRevGauge().actualRevs <= gearChangeRevs;
+                vehicleStatusData.revGauge.actualRevs <= gearChangeRevs;
     }
 
 
     private BiPredicate<VehicleStatusData, Integer> isThrottleApplied() {
-        return (vehicleStatusData, throttleThreshold) -> vehicleStatusData.throttleThreshold.level > throttleThreshold;
+        return (vehicleStatusData, throttleThreshold) -> getThrottleThreshold(vehicleStatusData) > throttleThreshold;
+    }
+
+    private int getThrottleThreshold(VehicleStatusData vehicleStatusData) {
+        return vehicleStatusData.throttleThreshold.level;
     }
 
     private Predicate<VehicleStatusData> isVehicleBraking() {
-        return vehicleStatusData -> vehicleStatusData.brakeThreshold.level > ZERO_THRESHOLD;
+        return vehicleStatusData -> getBrakeThreshold(vehicleStatusData) > ZERO_THRESHOLD;
+    }
+
+    private int getBrakeThreshold(VehicleStatusData vehicleStatusData) {
+        return vehicleStatusData.brakeThreshold.level;
     }
 
     private Function1<VehicleStatusData, Integer> comfortCalc() {

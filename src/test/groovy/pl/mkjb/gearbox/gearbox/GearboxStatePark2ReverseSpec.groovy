@@ -7,12 +7,10 @@ import static pl.mkjb.gearbox.settings.State.PARK
 import static pl.mkjb.gearbox.settings.State.REVERSE
 
 class GearboxStatePark2ReverseSpec extends Specification implements PreparedInput {
-    def externalSystem
     def gearboxDriver
 
     def setup() {
-        externalSystem = Stub(ExternalSystem)
-        gearboxDriver = GearboxDriver.powerUpGearbox(externalSystem)
+        gearboxDriver = GearboxDriver.powerUpGearbox()
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(PARK)
     }
@@ -33,11 +31,15 @@ class GearboxStatePark2ReverseSpec extends Specification implements PreparedInpu
 
     def "should throw exception when changing PARK to REVERSE"() {
 
-        when: "no brake force applied"
+        given: "no brake force applied"
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
+
+        when:
         gearboxDriver.onGearStickPositionChange(REVERSE)
 
         then:
         thrown(IllegalStateException)
+        and:
+        gearboxDriver.checkGearboxState() == PARK
     }
 }
