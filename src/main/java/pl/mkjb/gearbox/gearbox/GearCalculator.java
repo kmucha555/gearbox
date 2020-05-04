@@ -26,15 +26,13 @@ class GearCalculator {
 
     public Function1<VehicleStatusData, Gear> calculate() {
         return vehicleStatusData ->
-                new Gear(
-                        selectGearboxState()
-                                .apply(vehicleStatusData.state)
-                                .apply(vehicleStatusData.mode)
-                                .apply(vehicleStatusData)
-                );
+                selectGearboxState()
+                        .apply(vehicleStatusData.state)
+                        .apply(vehicleStatusData.mode)
+                        .apply(vehicleStatusData);
     }
 
-    private Function1<State, Function1<Mode, Function1<VehicleStatusData, Integer>>> selectGearboxState() {
+    private Function1<State, Function1<Mode, Function1<VehicleStatusData, Gear>>> selectGearboxState() {
         return state -> Match(state).of(
                 Case($(DRIVE), drive()),
                 Case($(PARK), park()),
@@ -42,7 +40,7 @@ class GearCalculator {
                 Case($(REVERSE), reverse()));
     }
 
-    private Function1<Mode, Function1<VehicleStatusData, Integer>> drive() {
+    private Function1<Mode, Function1<VehicleStatusData, Gear>> drive() {
         return mode -> Match(mode).of(
                 Case($(ECO), ecoCalculator.calculate()),
                 Case($(COMFORT), comfortCalculator.calculate()),
@@ -50,15 +48,15 @@ class GearCalculator {
                 Case($(SPORT_PLUS), sportPlusCalculator.calculate()));
     }
 
-    private Function1<Mode, Function1<VehicleStatusData, Integer>> park() {
-        return mode -> vehicleStatusData -> NEUTRAL_GEAR;
+    private Function1<Mode, Function1<VehicleStatusData, Gear>> park() {
+        return mode -> vehicleStatusData -> new Gear(NEUTRAL_GEAR);
     }
 
-    private Function1<Mode, Function1<VehicleStatusData, Integer>> neutral() {
-        return mode -> vehicleStatusData -> NEUTRAL_GEAR;
+    private Function1<Mode, Function1<VehicleStatusData, Gear>> neutral() {
+        return mode -> vehicleStatusData -> new Gear(NEUTRAL_GEAR);
     }
 
-    private Function1<Mode, Function1<VehicleStatusData, Integer>> reverse() {
-        return mode -> vehicleStatusData -> REVERSE_GEAR;
+    private Function1<Mode, Function1<VehicleStatusData, Gear>> reverse() {
+        return mode -> vehicleStatusData -> new Gear(REVERSE_GEAR);
     }
 }

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 
 @RequiredArgsConstructor
-class Brake implements Component<BrakeThreshold> {
+final class Brake implements Component<BrakeThreshold> {
     private final EventBus eventBus;
 
     @Override

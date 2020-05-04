@@ -13,7 +13,7 @@ import pl.mkjb.gearbox.settings.State;
 import static pl.mkjb.gearbox.settings.Setting.*;
 
 @Builder(access = AccessLevel.PRIVATE)
-public class ExternalFacade {
+public final class ExternalFacade {
     private final EventBus eventBus;
     private final Component<ThrottleThreshold> throttle;
     private final Component<BrakeThreshold> brake;

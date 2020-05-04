@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 
 @RequiredArgsConstructor
-class Engine implements Component<RevGauge> {
+final class Engine implements Component<RevGauge> {
     private final EventBus eventBus;
 
     @Override

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import pl.mkjb.gearbox.external.shared.LinearSpeed;
 
 @RequiredArgsConstructor
-class Velocity implements Component<LinearSpeed> {
+final class Velocity implements Component<LinearSpeed> {
     private final EventBus eventBus;
 
     @Override

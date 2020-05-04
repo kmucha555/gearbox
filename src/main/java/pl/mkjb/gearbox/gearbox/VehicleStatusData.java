@@ -12,7 +12,7 @@ import pl.mkjb.gearbox.settings.State;
 
 @Builder
 @ToString
-class VehicleStatusData {
+final class VehicleStatusData {
     public final ThrottleThreshold throttleThreshold;
     public final BrakeThreshold brakeThreshold;
     public final RevGauge revGauge;

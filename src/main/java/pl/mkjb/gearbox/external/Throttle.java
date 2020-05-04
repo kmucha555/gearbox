@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
 
 @RequiredArgsConstructor
-class Throttle implements Component<ThrottleThreshold> {
+final class Throttle implements Component<ThrottleThreshold> {
     private final EventBus eventBus;
 
     @Override

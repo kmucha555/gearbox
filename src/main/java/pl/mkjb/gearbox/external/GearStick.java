@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import pl.mkjb.gearbox.settings.State;
 
 @RequiredArgsConstructor
-class GearStick implements Component<State> {
+final class GearStick implements Component<State> {
     private final EventBus eventBus;
 
     @Override

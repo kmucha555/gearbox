@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import pl.mkjb.gearbox.settings.Mode;
 
 @RequiredArgsConstructor
-class DriveMode implements Component<Mode> {
+final class DriveMode implements Component<Mode> {
     private final EventBus eventBus;
 
     @Override

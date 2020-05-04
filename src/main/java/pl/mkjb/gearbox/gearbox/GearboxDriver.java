@@ -17,7 +17,7 @@ import static pl.mkjb.gearbox.settings.Setting.*;
 import static pl.mkjb.gearbox.settings.State.PARK;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class GearboxDriver {
+public final class GearboxDriver {
     private final Gearbox gearbox;
     private final GearCalculator gearCalculator;
     private final GearboxState gearboxState;
@@ -43,7 +43,7 @@ public class GearboxDriver {
 
     @Subscribe
     public void onGearStickPositionChange(State expectedState) {
-        this.state = this.gearboxState.change().apply(expectedState, vehicleStatusData());
+        this.state = this.gearboxState.changeGearboxState().apply(expectedState, vehicleStatusData());
         changeGear();
     }
 
@@ -71,9 +71,7 @@ public class GearboxDriver {
     }
 
     private void changeGear() {
-        val gear = this.gearCalculator.calculate()
-                .apply(vehicleStatusData());
-
+        val gear = this.gearCalculator.calculate().apply(vehicleStatusData());
         this.gearbox.changeGear(gear);
     }
 
