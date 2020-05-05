@@ -25,23 +25,23 @@ class GearCalculator {
     }
 
     public Function1<VehicleStatusData, Gear> calculate() {
-        return vehicleStatusData ->
-                newGear().apply(vehicleStatusData, selectGearboxState()
-                        .apply(vehicleStatusData.state)
-                        .apply(vehicleStatusData.mode)
-                        .apply(vehicleStatusData));
+        return statusData ->
+                newGear().apply(statusData, selectGearboxState()
+                        .apply(statusData.state)
+                        .apply(statusData.mode)
+                        .apply(statusData));
     }
 
     private Function2<VehicleStatusData, Integer, Gear> newGear() {
-        return (vehicleStatusData, gearChangeScope) -> {
-            var newGear = vehicleStatusData.currentGear.gear + gearChangeScope;
+        return (statusData, gearChangeScope) -> {
+            var newGear = statusData.currentGear.gear + gearChangeScope;
 
-            if (gearChangeScope == KICKDOWN && isInDrive().test(vehicleStatusData) && isNotValidGear().test(newGear)) {
-                newGear = vehicleStatusData.currentGear.gear + DOWNSHIFT;
+            if (gearChangeScope == KICKDOWN && isInDrive().test(statusData) && isNotValidGear().test(newGear)) {
+                newGear = statusData.currentGear.gear + DOWNSHIFT;
             }
 
-            if (isInDrive().test(vehicleStatusData) && isNotValidGear().test(newGear)) {
-                return new Gear(vehicleStatusData.currentGear.gear);
+            if (isInDrive().test(statusData) && isNotValidGear().test(newGear)) {
+                return new Gear(statusData.currentGear.gear);
             }
 
             return new Gear(newGear);
@@ -64,19 +64,19 @@ class GearCalculator {
     }
 
     private Function1<Mode, Function1<VehicleStatusData, Integer>> park() {
-        return mode -> vehicleStatusData -> NEUTRAL_GEAR;
+        return mode -> statusData -> NEUTRAL_GEAR;
     }
 
     private Function1<Mode, Function1<VehicleStatusData, Integer>> neutral() {
-        return mode -> vehicleStatusData -> NEUTRAL_GEAR;
+        return mode -> statusData -> NEUTRAL_GEAR;
     }
 
     private Function1<Mode, Function1<VehicleStatusData, Integer>> reverse() {
-        return mode -> vehicleStatusData -> REVERSE_GEAR;
+        return mode -> statusData -> REVERSE_GEAR;
     }
 
     private Predicate<VehicleStatusData> isInDrive() {
-        return vehicleStatusData -> vehicleStatusData.state.equals(DRIVE);
+        return statusData -> statusData.state.equals(DRIVE);
     }
 
     private Predicate<Integer> isNotValidGear() {

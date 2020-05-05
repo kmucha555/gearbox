@@ -35,5 +35,4 @@ public final class Setting {
     public static final int NO_SPEED = 0;
     public static final int SOME_SPEED = 50;
     public static final int MAX_LINEAR_SPEED = 250;
-
 }

@@ -3,37 +3,33 @@ package pl.mkjb.gearbox.gearbox;
 import io.vavr.Function1;
 import io.vavr.Predicates;
 
-import java.util.function.Predicate;
-
+import static pl.mkjb.gearbox.gearbox.CommonCalculator.*;
 import static pl.mkjb.gearbox.settings.Setting.*;
 
 
 final class EcoCalculator implements Calculator {
-    private static final int UPSHIFT_REVS = 2000;
-    private static final int DOWNSHIFT_REVS = 1000;
-    private static final int DOWNSHIFT_WHILE_BRAKING = 1500;
 
     @Override
     public Function1<VehicleStatusData, Integer> calculate() {
-        return vehicleStatusData -> {
+        return statusData -> {
 
-            if (shouldUpshiftWhileAccelerating(vehicleStatusData)) {
+            if (shouldUpshiftWhileAccelerating(statusData)) {
                 return UPSHIFT;
             }
 
-            if (shouldDownshifthWhileAccelerating(vehicleStatusData)) {
+            if (shouldDownshifthWhileAccelerating(statusData)) {
                 return DOWNSHIFT;
             }
 
-            if (shouldDownshiftWhileBraking(vehicleStatusData)) {
+            if (shouldDownshiftWhileBraking(statusData)) {
                 return DOWNSHIFT;
             }
 
-            if (shouldNotChangeGearWhileAccelerating(vehicleStatusData)) {
+            if (shouldNotChangeGearWhileAccelerating(statusData)) {
                 return NO_GEAR_CHANGE;
             }
 
-            if (shoudNotChangeGearWhileBraking(vehicleStatusData)) {
+            if (shoudNotChangeGearWhileBraking(statusData)) {
                 return NO_GEAR_CHANGE;
             }
 
@@ -41,43 +37,23 @@ final class EcoCalculator implements Calculator {
         };
     }
 
-    private boolean shouldUpshiftWhileAccelerating(VehicleStatusData vehicleStatusData) {
-        return Predicates.allOf(isThrottleApplied(), shouldUpShift()).test(vehicleStatusData);
+    private boolean shouldUpshiftWhileAccelerating(VehicleStatusData statusData) {
+        return Predicates.allOf(isThrottleApplied(), shouldUpShift()).test(statusData);
     }
 
-    private boolean shouldDownshifthWhileAccelerating(VehicleStatusData vehicleStatusData) {
-        return Predicates.allOf(isThrottleApplied(), shouldDownShift()).test(vehicleStatusData);
+    private boolean shouldDownshifthWhileAccelerating(VehicleStatusData statusData) {
+        return Predicates.allOf(isThrottleApplied(), shouldDownShift()).test(statusData);
     }
 
-    private boolean shouldNotChangeGearWhileAccelerating(VehicleStatusData vehicleStatusData) {
-        return isThrottleApplied().and(Predicates.noneOf(shouldDownShift(), shouldUpShift())).test(vehicleStatusData);
+    private boolean shouldNotChangeGearWhileAccelerating(VehicleStatusData statusData) {
+        return isThrottleApplied().and(Predicates.noneOf(shouldDownShift(), shouldUpShift())).test(statusData);
     }
 
-    private boolean shouldDownshiftWhileBraking(VehicleStatusData vehicleStatusData) {
-        return Predicates.allOf(isBrakeForceApplied(), shouldDownShiftWhileBraking()).test(vehicleStatusData);
+    private boolean shouldDownshiftWhileBraking(VehicleStatusData statusData) {
+        return Predicates.allOf(isBrakeForceApplied(), shouldDownShiftWhileBraking()).test(statusData);
     }
 
-    private boolean shoudNotChangeGearWhileBraking(VehicleStatusData vehicleStatusData) {
-        return isBrakeForceApplied().and(Predicates.noneOf(shouldDownShiftWhileBraking())).test(vehicleStatusData);
-    }
-
-    private Predicate<VehicleStatusData> isThrottleApplied() {
-        return vehicleStatusData -> vehicleStatusData.throttleThreshold.level > ZERO_THRESHOLD;
-    }
-
-    private Predicate<VehicleStatusData> isBrakeForceApplied() {
-        return vehicleStatusData -> vehicleStatusData.brakeThreshold.level > ZERO_THRESHOLD;
-    }
-
-    private Predicate<VehicleStatusData> shouldUpShift() {
-        return vehicleStatusData -> vehicleStatusData.revGauge.actualRevs >= UPSHIFT_REVS;
-    }
-
-    private Predicate<VehicleStatusData> shouldDownShift() {
-        return vehicleStatusData -> vehicleStatusData.revGauge.actualRevs <= DOWNSHIFT_REVS;
-    }
-
-    private Predicate<VehicleStatusData> shouldDownShiftWhileBraking() {
-        return vehicleStatusData -> vehicleStatusData.revGauge.actualRevs <= DOWNSHIFT_WHILE_BRAKING;
+    private boolean shoudNotChangeGearWhileBraking(VehicleStatusData statusData) {
+        return isBrakeForceApplied().and(Predicates.noneOf(shouldDownShiftWhileBraking())).test(statusData);
     }
 }
