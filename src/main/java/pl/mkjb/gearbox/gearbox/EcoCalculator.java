@@ -17,23 +17,23 @@ final class EcoCalculator implements Calculator {
     public Function1<VehicleStatusData, Integer> calculate() {
         return vehicleStatusData -> {
 
-            if (isThrottleAppliedAndRevsAreOverUpshiftLimit(vehicleStatusData)) {
+            if (shouldUpshiftWhileAccelerating(vehicleStatusData)) {
                 return UPSHIFT;
             }
 
-            if (isThrottleAppliedAndRevsAreBelowDownshiftLimit(vehicleStatusData)) {
+            if (shouldDownshifthWhileAccelerating(vehicleStatusData)) {
                 return DOWNSHIFT;
             }
 
-            if (isBrakeAppliedAndRevsAreBelowDownShiftWhileBrakingLimit(vehicleStatusData)) {
+            if (shouldDownshiftWhileBraking(vehicleStatusData)) {
                 return DOWNSHIFT;
             }
 
-            if (isThrottleAppliedAndRevsAreBetweenUpAndDownShiftLimits(vehicleStatusData)) {
+            if (shouldNotChangeGearWhileAccelerating(vehicleStatusData)) {
                 return NO_GEAR_CHANGE;
             }
 
-            if (isBrakeAppliedAndRevsAreOverDownshiftWhileBrakingLimit(vehicleStatusData)) {
+            if (shoudNotChangeGearWhileBraking(vehicleStatusData)) {
                 return NO_GEAR_CHANGE;
             }
 
@@ -41,23 +41,23 @@ final class EcoCalculator implements Calculator {
         };
     }
 
-    private boolean isThrottleAppliedAndRevsAreOverUpshiftLimit(VehicleStatusData vehicleStatusData) {
+    private boolean shouldUpshiftWhileAccelerating(VehicleStatusData vehicleStatusData) {
         return Predicates.allOf(isThrottleApplied(), shouldUpShift()).test(vehicleStatusData);
     }
 
-    private boolean isThrottleAppliedAndRevsAreBelowDownshiftLimit(VehicleStatusData vehicleStatusData) {
+    private boolean shouldDownshifthWhileAccelerating(VehicleStatusData vehicleStatusData) {
         return Predicates.allOf(isThrottleApplied(), shouldDownShift()).test(vehicleStatusData);
     }
 
-    private boolean isBrakeAppliedAndRevsAreBelowDownShiftWhileBrakingLimit(VehicleStatusData vehicleStatusData) {
-        return Predicates.allOf(isBrakeForceApplied(), shouldDownShiftWhileBraking()).test(vehicleStatusData);
-    }
-
-    private boolean isThrottleAppliedAndRevsAreBetweenUpAndDownShiftLimits(VehicleStatusData vehicleStatusData) {
+    private boolean shouldNotChangeGearWhileAccelerating(VehicleStatusData vehicleStatusData) {
         return isThrottleApplied().and(Predicates.noneOf(shouldDownShift(), shouldUpShift())).test(vehicleStatusData);
     }
 
-    private boolean isBrakeAppliedAndRevsAreOverDownshiftWhileBrakingLimit(VehicleStatusData vehicleStatusData) {
+    private boolean shouldDownshiftWhileBraking(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isBrakeForceApplied(), shouldDownShiftWhileBraking()).test(vehicleStatusData);
+    }
+
+    private boolean shoudNotChangeGearWhileBraking(VehicleStatusData vehicleStatusData) {
         return isBrakeForceApplied().and(Predicates.noneOf(shouldDownShiftWhileBraking())).test(vehicleStatusData);
     }
 

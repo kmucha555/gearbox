@@ -15,36 +15,35 @@ final class SportCalculator implements Calculator {
     private static final int THROTTLE_THRESHOLD_DOUBLE_KICKDOWN = 70;
     private static final int KICKDOWN_MAX_REVS_LIMIT = 5000;
 
-
     @Override
     public Function1<VehicleStatusData, Integer> calculate() {
         return vehicleStatusData -> {
 
-            if (Predicates.allOf(isThrottleThresholdOverDoubleKickdownLimit(), isBelowDownshiftRevsLimit()).test(vehicleStatusData)) {
+            if (shouldMakeDoubleKickdown(vehicleStatusData)) {
                 return KICKDOWN;
             }
 
-            if (Predicates.allOf(isThrottleThresholdOverSingleKickdownLimit(), isBelowDownshiftRevsLimit()).test(vehicleStatusData)) {
+            if (shouldMakeSingleKickdown(vehicleStatusData)) {
                 return DOWNSHIFT;
             }
 
-            if (Predicates.allOf(isThrottleApplied(), shouldDownShift()).test(vehicleStatusData)) {
+            if (shouldDownshift(vehicleStatusData)) {
                 return DOWNSHIFT;
             }
 
-            if (Predicates.allOf(isThrottleApplied(), shouldUpShift()).test(vehicleStatusData)) {
+            if (shouldUpshift(vehicleStatusData)) {
                 return UPSHIFT;
             }
 
-            if (isThrottleApplied().and(Predicates.noneOf(shouldUpShift(), shouldDownShift())).test(vehicleStatusData)) {
+            if (shouldNotChangeGearWhileAccelerating(vehicleStatusData)) {
                 return NO_GEAR_CHANGE;
             }
 
-            if (Predicates.allOf(isBrakeForceApplied(), shouldDownShiftWhileBraking()).test(vehicleStatusData)) {
+            if (shouldDownshiftWhileBraking(vehicleStatusData)) {
                 return DOWNSHIFT;
             }
 
-            if (Predicates.allOf(isBrakeForceApplied().and(Predicates.noneOf(shouldDownShiftWhileBraking()))).test(vehicleStatusData)) {
+            if (shouldNotChangeGearWhileBraking(vehicleStatusData)) {
                 return NO_GEAR_CHANGE;
             }
 
@@ -52,8 +51,32 @@ final class SportCalculator implements Calculator {
         };
     }
 
-    private Predicate<VehicleStatusData> isThrottleApplied() {
-        return vehicleStatusData -> vehicleStatusData.throttleThreshold.level > ZERO_THRESHOLD;
+    private boolean shouldMakeDoubleKickdown(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isThrottleThresholdOverDoubleKickdownLimit(), isBelowDownshiftRevsLimit()).test(vehicleStatusData);
+    }
+
+    private boolean shouldMakeSingleKickdown(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isThrottleThresholdOverSingleKickdownLimit(), isBelowDownshiftRevsLimit()).test(vehicleStatusData);
+    }
+
+    private boolean shouldDownshift(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isThrottleApplied(), shouldDownShift()).test(vehicleStatusData);
+    }
+
+    private boolean shouldUpshift(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isThrottleApplied(), shouldUpShift()).test(vehicleStatusData);
+    }
+
+    private boolean shouldNotChangeGearWhileAccelerating(VehicleStatusData vehicleStatusData) {
+        return isThrottleApplied().and(Predicates.noneOf(shouldUpShift(), shouldDownShift())).test(vehicleStatusData);
+    }
+
+    private boolean shouldDownshiftWhileBraking(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isBrakeForceApplied(), shouldDownShiftWhileBraking()).test(vehicleStatusData);
+    }
+
+    private boolean shouldNotChangeGearWhileBraking(VehicleStatusData vehicleStatusData) {
+        return Predicates.allOf(isBrakeForceApplied().and(Predicates.noneOf(shouldDownShiftWhileBraking()))).test(vehicleStatusData);
     }
 
     private Predicate<VehicleStatusData> isThrottleThresholdOverSingleKickdownLimit() {
@@ -66,6 +89,10 @@ final class SportCalculator implements Calculator {
 
     private Predicate<VehicleStatusData> isBelowDownshiftRevsLimit() {
         return vehicleStatusData -> vehicleStatusData.revGauge.actualRevs <= KICKDOWN_MAX_REVS_LIMIT;
+    }
+
+    private Predicate<VehicleStatusData> isThrottleApplied() {
+        return vehicleStatusData -> vehicleStatusData.throttleThreshold.level > ZERO_THRESHOLD;
     }
 
     private Predicate<VehicleStatusData> shouldUpShift() {
@@ -83,5 +110,4 @@ final class SportCalculator implements Calculator {
     private Predicate<VehicleStatusData> isBrakeForceApplied() {
         return vehicleStatusData -> vehicleStatusData.brakeThreshold.level > ZERO_THRESHOLD;
     }
-
 }
