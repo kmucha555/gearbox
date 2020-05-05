@@ -1,7 +1,7 @@
 # Automatic gearbox model
 
 ## Info
-**Project submitted to participate in competition announced by https://devupgrade.online/
+Project submitted to participate in competition announced by **https://devupgrade.online/**
 
 ## Technologies
 
