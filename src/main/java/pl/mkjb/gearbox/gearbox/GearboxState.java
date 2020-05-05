@@ -5,6 +5,7 @@ import io.vavr.Function2;
 import io.vavr.control.Option;
 import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 import pl.mkjb.gearbox.external.shared.LinearSpeed;
+import pl.mkjb.gearbox.gearbox.shared.VehicleStatusData;
 import pl.mkjb.gearbox.settings.State;
 
 import java.util.function.Predicate;

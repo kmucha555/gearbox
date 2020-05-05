@@ -1,15 +1,16 @@
-package pl.mkjb.gearbox.gearbox;
+package pl.mkjb.gearbox.gearbox.calculators;
 
 import io.vavr.Function1;
 import io.vavr.Function2;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+import pl.mkjb.gearbox.gearbox.shared.VehicleStatusData;
 import pl.mkjb.gearbox.settings.Mode;
 
 import java.util.function.Predicate;
 
 import static io.vavr.API.*;
-import static pl.mkjb.gearbox.gearbox.CommonCalculator.DriveModeSettings.*;
+import static pl.mkjb.gearbox.gearbox.calculators.CommonCalculator.DriveModeSettings.*;
 import static pl.mkjb.gearbox.settings.AggressiveMode.*;
 import static pl.mkjb.gearbox.settings.Mode.ECO;
 import static pl.mkjb.gearbox.settings.Setting.ZERO_THRESHOLD;

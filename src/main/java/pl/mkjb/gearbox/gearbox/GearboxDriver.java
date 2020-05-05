@@ -8,7 +8,9 @@ import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 import pl.mkjb.gearbox.external.shared.LinearSpeed;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
+import pl.mkjb.gearbox.gearbox.calculators.CalculatorFacade;
 import pl.mkjb.gearbox.gearbox.shared.Gear;
+import pl.mkjb.gearbox.gearbox.shared.VehicleStatusData;
 import pl.mkjb.gearbox.settings.AggressiveMode;
 import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
@@ -33,7 +35,8 @@ public final class GearboxDriver {
     private AggressiveMode aggressiveMode = SOFT;
 
     public static GearboxDriver powerUpGearbox(Gearbox gearbox) {
-        val gearboxCalc = new GearCalculator();
+        val calculatorFacade = new CalculatorFacade();
+        val gearboxCalc = new GearCalculator(calculatorFacade);
         val gearboxState = new GearboxState();
 
         return new GearboxDriver(gearbox, gearboxCalc, gearboxState);

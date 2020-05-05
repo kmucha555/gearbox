@@ -1,9 +1,10 @@
-package pl.mkjb.gearbox.gearbox;
+package pl.mkjb.gearbox.gearbox.calculators;
 
 import io.vavr.Function1;
 import io.vavr.Predicates;
+import pl.mkjb.gearbox.gearbox.shared.VehicleStatusData;
 
-import static pl.mkjb.gearbox.gearbox.CommonCalculator.*;
+import static pl.mkjb.gearbox.gearbox.calculators.CommonCalculator.*;
 import static pl.mkjb.gearbox.settings.Setting.*;
 
 final class SportCalculator implements Calculator {

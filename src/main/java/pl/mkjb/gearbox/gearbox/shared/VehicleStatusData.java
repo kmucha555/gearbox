@@ -1,4 +1,4 @@
-package pl.mkjb.gearbox.gearbox;
+package pl.mkjb.gearbox.gearbox.shared;
 
 import lombok.Builder;
 import lombok.ToString;
@@ -6,14 +6,13 @@ import pl.mkjb.gearbox.external.shared.BrakeThreshold;
 import pl.mkjb.gearbox.external.shared.LinearSpeed;
 import pl.mkjb.gearbox.external.shared.RevGauge;
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold;
-import pl.mkjb.gearbox.gearbox.shared.Gear;
 import pl.mkjb.gearbox.settings.AggressiveMode;
 import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
 
 @Builder
 @ToString
-final class VehicleStatusData {
+public final class VehicleStatusData {
     public final ThrottleThreshold throttleThreshold;
     public final BrakeThreshold brakeThreshold;
     public final RevGauge revGauge;

@@ -2,7 +2,10 @@ package pl.mkjb.gearbox.gearbox;
 
 import io.vavr.Function1;
 import io.vavr.Function2;
+import lombok.RequiredArgsConstructor;
+import pl.mkjb.gearbox.gearbox.calculators.CalculatorFacade;
 import pl.mkjb.gearbox.gearbox.shared.Gear;
+import pl.mkjb.gearbox.gearbox.shared.VehicleStatusData;
 import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
 
@@ -13,16 +16,9 @@ import static pl.mkjb.gearbox.settings.Mode.*;
 import static pl.mkjb.gearbox.settings.Setting.*;
 import static pl.mkjb.gearbox.settings.State.*;
 
+@RequiredArgsConstructor
 class GearCalculator {
-    private final Calculator ecoCalculator;
-    private final Calculator comfortCalculator;
-    private final Calculator sportCalculator;
-
-    public GearCalculator() {
-        this.ecoCalculator = new EcoCalculator();
-        this.comfortCalculator = new ComfortCalculator();
-        this.sportCalculator = new SportCalculator();
-    }
+    private final CalculatorFacade calculatorFacade;
 
     public Function1<VehicleStatusData, Gear> calculate() {
         return statusData ->
@@ -58,9 +54,9 @@ class GearCalculator {
 
     private Function1<Mode, Function1<VehicleStatusData, Integer>> drive() {
         return mode -> Match(mode).of(
-                Case($(ECO), ecoCalculator.calculate()),
-                Case($(COMFORT), comfortCalculator.calculate()),
-                Case($(SPORT), sportCalculator.calculate()));
+                Case($(ECO), calculatorFacade.ecoCalculator()),
+                Case($(COMFORT), calculatorFacade.comfortCalculator()),
+                Case($(SPORT), calculatorFacade.sportCalculator()));
     }
 
     private Function1<Mode, Function1<VehicleStatusData, Integer>> park() {
