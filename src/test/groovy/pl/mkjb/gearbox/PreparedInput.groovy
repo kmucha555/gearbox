@@ -7,15 +7,15 @@ import pl.mkjb.gearbox.external.shared.RevGauge
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold
 import pl.mkjb.gearbox.gearbox.GearboxDriver
 import pl.mkjb.gearbox.gearbox.shared.Gear
-import pl.mkjb.gearbox.settings.State
 
+import static pl.mkjb.gearbox.settings.Mode.ECO
+import static pl.mkjb.gearbox.settings.Mode.SPORT
 import static pl.mkjb.gearbox.settings.Setting.*
 import static pl.mkjb.gearbox.settings.State.DRIVE
 
 @CompileStatic
 trait PreparedInput {
 
-    State unsupportedState = State.TEST
     Gear reverseGear = new Gear(REVERSE_GEAR)
     Gear neutralGear = new Gear(NEUTRAL_GEAR)
     Gear firstGear = new Gear(FIRST_GEAR)
@@ -45,5 +45,19 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(DRIVE)
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
+    }
+
+    def changeToDriveEcoMode(GearboxDriver gearboxDriver) {
+        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        gearboxDriver.onGearStickPositionChange(DRIVE)
+        gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
+        gearboxDriver.onDriveModeChange(ECO)
+    }
+
+    def changeToDriveSportMode(GearboxDriver gearboxDriver) {
+        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        gearboxDriver.onGearStickPositionChange(DRIVE)
+        gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
+        gearboxDriver.onDriveModeChange(SPORT)
     }
 }

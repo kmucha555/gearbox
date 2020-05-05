@@ -2,7 +2,6 @@ package pl.mkjb.gearbox.gearbox;
 
 import io.vavr.Function1;
 import io.vavr.Function2;
-import lombok.val;
 import pl.mkjb.gearbox.gearbox.shared.Gear;
 import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
@@ -35,11 +34,16 @@ class GearCalculator {
 
     private Function2<VehicleStatusData, Integer, Gear> newGear() {
         return (vehicleStatusData, gearChangeScope) -> {
-            val newGear = vehicleStatusData.currentGear.gear + gearChangeScope;
+            var newGear = vehicleStatusData.currentGear.gear + gearChangeScope;
 
-            if (isInDrive().test(vehicleStatusData) && isValidGear().test(newGear)) {
+            if (gearChangeScope == KICKDOWN && isInDrive().test(vehicleStatusData) && isNotValidGear().test(newGear)) {
+                newGear = vehicleStatusData.currentGear.gear + DOWNSHIFT;
+            }
+
+            if (isInDrive().test(vehicleStatusData) && isNotValidGear().test(newGear)) {
                 return new Gear(vehicleStatusData.currentGear.gear);
             }
+
             return new Gear(newGear);
         };
     }
@@ -75,7 +79,7 @@ class GearCalculator {
         return vehicleStatusData -> vehicleStatusData.state.equals(DRIVE);
     }
 
-    private Predicate<Integer> isValidGear() {
+    private Predicate<Integer> isNotValidGear() {
         return newGear -> newGear < FIRST_GEAR || newGear > MAX_GEAR_NUMBER;
     }
 }
