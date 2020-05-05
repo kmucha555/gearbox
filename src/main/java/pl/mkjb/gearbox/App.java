@@ -2,14 +2,11 @@ package pl.mkjb.gearbox;
 
 import com.google.common.eventbus.EventBus;
 import lombok.val;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
 import pl.mkjb.gearbox.external.ExternalFacade;
 import pl.mkjb.gearbox.gearbox.GearboxFacade;
 
 public class App {
     public static void main(String[] args) {
-        Configurator.setLevel("pl.mkjb.gearbox", Level.INFO);
 
         val gearboxDriver = GearboxFacade.run();
         val eventBus = new EventBus();
