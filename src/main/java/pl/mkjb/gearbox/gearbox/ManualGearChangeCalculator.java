@@ -42,32 +42,35 @@ class ManualGearChangeCalculator {
         return (gearChangeScope, statusData) -> {
             val newGear = statusData.currentGear.gear + gearChangeScope.gear;
 
-            if (shouldUpshift().test(gearChangeScope, statusData)) {
+            if (isUpshiftPossible().test(gearChangeScope, statusData)) {
                 return newGear;
             }
 
-            if (shouldDownshift().test(gearChangeScope, statusData)) {
+            if (isDownshiftPossible().test(gearChangeScope, statusData)) {
                 return newGear;
             }
+
             return statusData.currentGear.gear;
         };
     }
 
-    private BiPredicate<Gear, VehicleStatusData> shouldUpshift() {
+    private BiPredicate<Gear, VehicleStatusData> isUpshiftPossible() {
         return (gearChangeScope, statusData) -> {
             val newGear = statusData.currentGear.gear + gearChangeScope.gear;
             return Predicates.is(isValidGear().test(newGear))
                     .and(Predicates.is(isUpshifting().test(gearChangeScope)))
-                    .and(Predicates.is(isOverUpshiftRevsLimit().test(statusData))).test(true);
+                    .and(Predicates.is(isOverUpshiftRevsLimit().test(statusData)))
+                    .test(true);
         };
     }
 
-    private BiPredicate<Gear, VehicleStatusData> shouldDownshift() {
+    private BiPredicate<Gear, VehicleStatusData> isDownshiftPossible() {
         return (gearChangeScope, statusData) -> {
             val newGear = statusData.currentGear.gear + gearChangeScope.gear;
             return Predicates.is(isValidGear().test(newGear))
                     .and(Predicates.is(isDownshifting().test(gearChangeScope)))
-                    .and(Predicates.is(isOverDownshiftRevsLimit().test(statusData))).test(true);
+                    .and(Predicates.is(isOverDownshiftRevsLimit().test(statusData)))
+                    .test(true);
         };
     }
 

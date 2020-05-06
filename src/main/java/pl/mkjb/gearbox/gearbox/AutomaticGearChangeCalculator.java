@@ -2,6 +2,7 @@ package pl.mkjb.gearbox.gearbox;
 
 import io.vavr.Function1;
 import io.vavr.Function2;
+import io.vavr.Predicates;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import pl.mkjb.gearbox.gearbox.calculators.CalculatorFacade;
@@ -10,6 +11,7 @@ import pl.mkjb.gearbox.gearbox.shared.VehicleStatusData;
 import pl.mkjb.gearbox.settings.Mode;
 import pl.mkjb.gearbox.settings.State;
 
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import static io.vavr.API.*;
@@ -35,36 +37,55 @@ class AutomaticGearChangeCalculator {
         return Gear::new;
     }
 
-    //TODO refactor this method
     private Function2<VehicleStatusData, Integer, Integer> validateCalculatedGear() {
-        return (statusData, gearChangeScope) -> {
-            val currentGear = statusData.currentGear.gear;
-            var newGear = currentGear + gearChangeScope;
+        return (statusData, calculatedGearChangeScope) -> {
+            val newGear = statusData.currentGear.gear + calculatedGearChangeScope;
 
-            if (isInDrive().test(statusData)) {
-                if (isDoubleKickdown().test(gearChangeScope) && isValidGear().negate().test(newGear)) {
-                    newGear = currentGear + DOWNSHIFT;
-                    if (isValidGear().negate().test(newGear)) {
-                        return currentGear;
-                    }
-                    return newGear;
+            if (doubleKickdownIsNotPossible().test(calculatedGearChangeScope, statusData)) {
+                val singleKickdown = statusData.currentGear.gear + DOWNSHIFT;
+
+                if (singleKickdownIsNotPossible().test(singleKickdown)) {
+                    return statusData.currentGear.gear;
                 }
 
-                if (isValidGear().negate().test(newGear)) {
-                    return currentGear;
-                }
+                return singleKickdown;
+            }
+
+            if (changeToNewGearIsNotPossible().test(newGear, statusData)) {
+                return statusData.currentGear.gear;
             }
 
             return newGear;
         };
     }
 
+    private BiPredicate<Integer, VehicleStatusData> doubleKickdownIsNotPossible() {
+        return (gearChangeScope, statusData) -> {
+            val newGear = statusData.currentGear.gear + gearChangeScope;
+            return Predicates.is(isInDrive().test(statusData))
+                    .and(Predicates.is(isDoubleKickdown().test(gearChangeScope)))
+                    .and(Predicates.is(isInvalidGear().test(newGear)))
+                    .test(true);
+        };
+    }
+
+    private Predicate<Integer> singleKickdownIsNotPossible() {
+        return gear -> isInvalidGear().test(gear);
+    }
+
+    private BiPredicate<Integer, VehicleStatusData> changeToNewGearIsNotPossible() {
+        return (newGear, statusData) ->
+                Predicates.is(isInDrive().test(statusData))
+                        .and(Predicates.is(isInvalidGear().test(newGear)))
+                        .test(true);
+    }
+
     private Predicate<Integer> isDoubleKickdown() {
         return gearChangeScope -> gearChangeScope == KICKDOWN;
     }
 
-    private Predicate<Integer> isValidGear() {
-        return gear -> gear >= FIRST_GEAR && gear <= MAX_GEAR_NUMBER;
+    private Predicate<Integer> isInvalidGear() {
+        return gear -> gear < FIRST_GEAR || gear > MAX_GEAR_NUMBER;
     }
 
     private Function1<State, Function1<Mode, Function1<VehicleStatusData, Integer>>> selectGearboxState() {
@@ -73,6 +94,10 @@ class AutomaticGearChangeCalculator {
                 Case($(PARK), park()),
                 Case($(NEUTRAL), neutral()),
                 Case($(REVERSE), reverse()));
+    }
+
+    private Predicate<VehicleStatusData> isInDrive() {
+        return statusData -> statusData.state.equals(DRIVE);
     }
 
     private Function1<Mode, Function1<VehicleStatusData, Integer>> drive() {
@@ -92,9 +117,5 @@ class AutomaticGearChangeCalculator {
 
     private Function1<Mode, Function1<VehicleStatusData, Integer>> reverse() {
         return mode -> statusData -> REVERSE_GEAR;
-    }
-
-    private Predicate<VehicleStatusData> isInDrive() {
-        return statusData -> statusData.state.equals(DRIVE);
     }
 }
