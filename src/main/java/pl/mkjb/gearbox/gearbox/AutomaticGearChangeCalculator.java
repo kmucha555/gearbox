@@ -18,7 +18,7 @@ import static pl.mkjb.gearbox.settings.Setting.*;
 import static pl.mkjb.gearbox.settings.State.*;
 
 @RequiredArgsConstructor
-class GearCalculator {
+class AutomaticGearChangeCalculator {
     private final CalculatorFacade calculatorFacade;
 
     public Function1<VehicleStatusData, Gear> calculate() {

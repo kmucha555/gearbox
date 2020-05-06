@@ -18,13 +18,13 @@ import pl.mkjb.gearbox.settings.State;
 import static pl.mkjb.gearbox.settings.AggressiveMode.SOFT;
 import static pl.mkjb.gearbox.settings.Mode.COMFORT;
 import static pl.mkjb.gearbox.settings.Setting.*;
-import static pl.mkjb.gearbox.settings.State.DRIVE;
-import static pl.mkjb.gearbox.settings.State.PARK;
+import static pl.mkjb.gearbox.settings.State.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GearboxDriver {
     private final Gearbox gearbox;
-    private final GearCalculator gearCalculator;
+    private final AutomaticGearChangeCalculator automaticGearChangeCalculator;
+    private final ManualGearChangeCalculator manualGearChangeCalculator;
     private final GearboxState gearboxState;
     private ThrottleThreshold throttleThreshold = new ThrottleThreshold(ZERO_THRESHOLD);
     private BrakeThreshold brakeThreshold = new BrakeThreshold(ZERO_THRESHOLD);
@@ -36,46 +36,47 @@ public final class GearboxDriver {
 
     public static GearboxDriver powerUpGearbox(Gearbox gearbox) {
         val calculatorFacade = new CalculatorFacade();
-        val gearboxCalc = new GearCalculator(calculatorFacade);
+        val automaticGearChangeCalc = new AutomaticGearChangeCalculator(calculatorFacade);
+        val manualGearChangeCalc = new ManualGearChangeCalculator();
         val gearboxState = new GearboxState();
 
-        return new GearboxDriver(gearbox, gearboxCalc, gearboxState);
+        return new GearboxDriver(gearbox, automaticGearChangeCalc, manualGearChangeCalc, gearboxState);
     }
 
     @Subscribe
     public void onEngineRevsChange(RevGauge revGauge) {
         this.revGauge = revGauge;
-        changeGear();
+        automaticGearChange();
     }
 
     @Subscribe
     public void onGearStickPositionChange(State expectedState) {
         this.state = this.gearboxState.changeGearboxState().apply(expectedState, vehicleStatusData());
-        changeGear();
+        automaticGearChange();
     }
 
     @Subscribe
     public void onDriveModeChange(Mode mode) {
         this.mode = mode;
-        changeGear();
+        automaticGearChange();
     }
 
     @Subscribe
     public void onGearChangeMode(AggressiveMode aggressiveMode) {
         this.aggressiveMode = aggressiveMode;
-        changeGear();
+        automaticGearChange();
     }
 
     @Subscribe
     public void onThrottleChange(ThrottleThreshold throttleThreshold) {
         this.throttleThreshold = throttleThreshold;
-        changeGear();
+        automaticGearChange();
     }
 
     @Subscribe
     public void onBrakeApplied(BrakeThreshold brakeThreshold) {
         this.brakeThreshold = brakeThreshold;
-        changeGear();
+        automaticGearChange();
     }
 
     @Subscribe
@@ -86,19 +87,14 @@ public final class GearboxDriver {
     @Subscribe
     public void onPaddleUse(Gear gearChangeScope) {
         if (this.state == DRIVE) {
-            val newGear = this.gearbox.currentGear().gear + gearChangeScope.gear;
-            if (isValidGear(newGear)) {
-                this.gearbox.changeGear(new Gear(newGear));
-            }
+            this.state = MANUAL;
+            val newGear = this.manualGearChangeCalculator.calculate().apply(gearChangeScope, vehicleStatusData());
+            this.gearbox.changeGear(newGear);
         }
     }
 
-    private boolean isValidGear(int gear) {
-        return gear >= FIRST_GEAR && gear <= MAX_GEAR_NUMBER;
-    }
-
-    private void changeGear() {
-        val newGear = this.gearCalculator.calculate().apply(vehicleStatusData());
+    private void automaticGearChange() {
+        val newGear = this.automaticGearChangeCalculator.calculate().apply(vehicleStatusData());
         this.gearbox.changeGear(newGear);
     }
 

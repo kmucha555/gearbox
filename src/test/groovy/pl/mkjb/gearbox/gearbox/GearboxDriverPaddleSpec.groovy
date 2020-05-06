@@ -4,6 +4,11 @@ import pl.mkjb.gearbox.PreparedInput
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static pl.mkjb.gearbox.settings.Mode.COMFORT
+import static pl.mkjb.gearbox.settings.Mode.ECO
+import static pl.mkjb.gearbox.settings.Mode.SPORT
+import static pl.mkjb.gearbox.settings.State.MANUAL
+
 class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
     Gearbox gearbox = Mock()
     GearboxDriver gearboxDriver
@@ -12,11 +17,34 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         gearboxDriver = GearboxDriver.powerUpGearbox(gearbox)
     }
 
+    def "should change gearbox to MANUAL when paddle is used no matter which drive mode is used (#drive_mode)"() {
+
+        given: "gearbox in drive mode on third gear"
+        gearbox.currentGear() >> thirdGear
+        changeToDrive(gearboxDriver)
+        gearboxDriver.onDriveModeChange(drive_mode)
+        gearboxDriver.onEngineRevsChange(mediumRpm)
+
+        when: "paddle is used"
+        gearboxDriver.onPaddleUse(upshift)
+
+        then: "gearbox state is switched to manual"
+        gearboxDriver.checkGearboxState() == output
+
+        where:
+        drive_mode | output
+        ECO        | MANUAL
+        COMFORT    | MANUAL
+        SPORT      | MANUAL
+    }
+
     @Unroll
     def "should upshift from #input to #output using paddles"() {
+
         given:
         gearbox.currentGear() >> input
         changeToDrive(gearboxDriver)
+        gearboxDriver.onEngineRevsChange(mediumRpm)
 
         when:
         gearboxDriver.onPaddleUse(upshift)
@@ -31,16 +59,38 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
     }
 
     @Unroll
-    def "should not upshift when gearbox is on max #input.gear th gear using paddles"() {
+    def "should not upshift from #input to #output using paddles when engine revs are too low"() {
+
         given:
         gearbox.currentGear() >> input
         changeToDrive(gearboxDriver)
+        gearboxDriver.onEngineRevsChange(veryLowRpm)
 
         when:
         gearboxDriver.onPaddleUse(upshift)
 
         then:
-        0 * gearbox.changeGear(output)
+        1 * gearbox.changeGear(output)
+
+        where:
+        input     | output
+        firstGear | firstGear
+        thirdGear | thirdGear
+    }
+
+    @Unroll
+    def "should not upshift when gearbox is on max #input.gear th gear using paddles"() {
+
+        given:
+        gearbox.currentGear() >> input
+        changeToDrive(gearboxDriver)
+        gearboxDriver.onEngineRevsChange(mediumRpm)
+
+        when:
+        gearboxDriver.onPaddleUse(upshift)
+
+        then:
+        1 * gearbox.changeGear(output)
 
         where:
         input     | output
@@ -49,9 +99,11 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
 
     @Unroll
     def "should downshift one gear from #input to #output using paddles"() {
+
         given:
         gearbox.currentGear() >> input
         changeToDrive(gearboxDriver)
+        gearboxDriver.onEngineRevsChange(mediumRpm)
 
         when:
         gearboxDriver.onPaddleUse(downshift)
@@ -65,16 +117,38 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         fourthGear | thirdGear
     }
 
-    def "should not downshift when gearbox is on first gear using paddles"() {
+    @Unroll
+    def "should not downshift from #input to #output using paddles when engine revs are too high"() {
+
         given:
         gearbox.currentGear() >> input
         changeToDrive(gearboxDriver)
+        gearboxDriver.onEngineRevsChange(veryHighRpm)
 
         when:
         gearboxDriver.onPaddleUse(downshift)
 
         then:
-        0 * gearbox.changeGear(output)
+        1 * gearbox.changeGear(output)
+
+        where:
+        input     | output
+        fourthGear | fourthGear
+        secondGear | secondGear
+    }
+
+    def "should not downshift when gearbox is on first gear using paddles"() {
+
+        given:
+        gearbox.currentGear() >> input
+        changeToDrive(gearboxDriver)
+        gearboxDriver.onEngineRevsChange(mediumRpm)
+
+        when:
+        gearboxDriver.onPaddleUse(downshift)
+
+        then:
+        1 * gearbox.changeGear(output)
 
         where:
         input     | output

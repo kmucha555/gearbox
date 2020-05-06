@@ -10,7 +10,7 @@ import pl.mkjb.gearbox.settings.Mode;
 import java.util.function.Predicate;
 
 import static io.vavr.API.*;
-import static pl.mkjb.gearbox.gearbox.calculators.CommonCalculator.DriveModeSettings.*;
+import static pl.mkjb.gearbox.gearbox.calculators.CommonCalculator.GearChangeCharacteristics.*;
 import static pl.mkjb.gearbox.settings.AggressiveMode.*;
 import static pl.mkjb.gearbox.settings.Mode.ECO;
 import static pl.mkjb.gearbox.settings.Setting.ZERO_THRESHOLD;
@@ -19,7 +19,7 @@ final class CommonCalculator {
 
     @RequiredArgsConstructor
     @Accessors(fluent = true)
-    public enum DriveModeSettings {
+    public enum GearChangeCharacteristics {
         ECO_SETTINGS(2000, 1000, 1500, -1, 0, 0),
         COMFORT_SETTINGS(2500, 1000, 2000, 4500, 50, -1),
         SPORT_SETTINGS(5000, 1500, 3000, 5000, 50, 70);
@@ -64,7 +64,7 @@ final class CommonCalculator {
         return statusData -> statusData.brakeThreshold.level > ZERO_THRESHOLD;
     }
 
-    private static Function1<VehicleStatusData, DriveModeSettings> driveModeSettings() {
+    private static Function1<VehicleStatusData, GearChangeCharacteristics> driveModeSettings() {
         return statusData ->
                 Match(statusData.mode).of(
                         Case($(ECO), ECO_SETTINGS),
