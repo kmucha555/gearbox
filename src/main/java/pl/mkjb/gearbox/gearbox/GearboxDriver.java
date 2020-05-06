@@ -93,6 +93,10 @@ public final class GearboxDriver {
         }
     }
 
+    private boolean isValidGear(int gear) {
+        return gear >= FIRST_GEAR && gear <= MAX_GEAR_NUMBER;
+    }
+
     private void changeGear() {
         val newGear = this.gearCalculator.calculate().apply(vehicleStatusData());
         this.gearbox.changeGear(newGear);
@@ -117,9 +121,5 @@ public final class GearboxDriver {
 
     public Gear checkGearboxGear() {
         return this.gearbox.currentGear();
-    }
-
-    private boolean isValidGear(int gear) {
-        return gear >= FIRST_GEAR && gear <= MAX_GEAR_NUMBER;
     }
 }

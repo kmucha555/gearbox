@@ -4,7 +4,7 @@ import pl.mkjb.gearbox.PreparedInput
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class GearboxDriverDriveStateSportModeSpec extends Specification implements PreparedInput {
+class GearboxDriverDriveStateSportModeSoftChangeSpec extends Specification implements PreparedInput {
     Gearbox gearbox = Mock()
     GearboxDriver gearboxDriver
 
@@ -15,9 +15,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift one gear from #input to #output when #throttle% throttle engine very low RPM"() {
 
-        given: "fourth gear, sport mode, very low RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, very low RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(veryLowRpm)
 
         when: "throttle is applied"
@@ -35,9 +35,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift one gear from #input to #output when #throttle% throttle engine low RPM"() {
 
-        given: "fourth gear, sport mode, low RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, low RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(lowRpm)
 
         when: "throttle is applied"
@@ -55,9 +55,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift one gear from #input to #output when #throttle% throttle engine medium RPM"() {
 
-        given: "fourth gear, sport mode, medium RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, medium RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(mediumRpm)
 
         when: "throttle is applied"
@@ -74,9 +74,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift two gears from #input to #output when #throttle% throttle engine medium RPM"() {
 
-        given: "fourth gear, sport mode, medium RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, medium RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(mediumRpm)
 
         when: "throttle is applied"
@@ -93,9 +93,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift two gears from #input to #output when #throttle% throttle engine low RPM"() {
 
-        given: "fourth gear, sport mode, low RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, low RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(lowRpm)
 
         when: "throttle is applied"
@@ -112,9 +112,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift two gears from #input to #output when #throttle% throttle engine very low RPM"() {
 
-        given: "fourth gear, sport mode, very low RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, very low RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(veryLowRpm)
 
         when: "throttle is applied"
@@ -131,9 +131,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should not downshift when #throttle% throttle engine medium RPM"() {
 
-        given: "fourth gear, sport mode, medium RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, medium RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(mediumRpm)
 
         when: "throttle is applied"
@@ -150,9 +150,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should not downshift from first gear when #throttle% throttle engine very low RPM"() {
 
-        given: "first gear, sport mode, very low RPM"
+        given: "first gear, sport mode, aggressive mode soft, very low RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(veryLowRpm)
 
         when: "throttle is applied"
@@ -169,9 +169,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift only one gear when running on second gear #throttle% throttle engine very low RPM"() {
 
-        given: "second gear, sport mode, very low RPM"
+        given: "second gear, sport mode, aggressive mode soft, very low RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(veryLowRpm)
 
         when: "throttle is applied"
@@ -188,9 +188,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift only one gear when running on second gear #throttle% throttle engine low RPM"() {
 
-        given: "second gear, sport mode, low RPM"
+        given: "second gear, sport mode, aggressive mode soft, low RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(lowRpm)
 
         when: "throttle is applied"
@@ -207,9 +207,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift only one gear when running on second gear #throttle% throttle engine medium RPM"() {
 
-        given: "second gear, sport mode, medium RPM"
+        given: "second gear, sport mode, aggressive mode soft, medium RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(mediumRpm)
 
         when: "throttle is applied"
@@ -226,9 +226,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should upshift one gear from #input to #output when #throttle% throttle engine high RPM"() {
 
-        given: "third gear, sport mode, high RPM"
+        given: "third gear, sport mode, aggressive mode soft, high RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(highRpm)
 
         when: "throttle is applied"
@@ -240,16 +240,14 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
         where:
         throttle               | input     | output
         belowKickDownThrottle  | thirdGear | fourthGear
-        singleKickDownThrottle | thirdGear | fourthGear
-        doubleKickDownThrottle | thirdGear | fourthGear
     }
 
     @Unroll
     def "should not upshift when on max gear #throttle% throttle engine high RPM"() {
 
-        given: "max gear, sport mode, high RPM"
+        given: "max gear, sport mode, aggressive mode soft, high RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(highRpm)
 
         when: "throttle is applied"
@@ -261,16 +259,34 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
         where:
         throttle               | input   | output
         belowKickDownThrottle  | maxGear | maxGear
-        singleKickDownThrottle | maxGear | maxGear
-        doubleKickDownThrottle | maxGear | maxGear
+    }
+
+    @Unroll
+    def "should kickdown from #input to #output when #throttle% throttle engine very high RPM"() {
+
+        given: "third gear, sport mode, aggressive mode soft, very high RPM"
+        gearbox.currentGear() >> input
+        changeToDriveSportModeHardChange(gearboxDriver)
+        gearboxDriver.onEngineRevsChange(veryHighRpm)
+
+        when: "throttle is applied"
+        gearboxDriver.onThrottleChange(throttle)
+
+        then: "gearbox engages fourth gear"
+        1 * gearbox.changeGear(output)
+
+        where:
+        throttle               | input     | output
+        singleKickDownThrottle | thirdGear | secondGear
+        doubleKickDownThrottle | thirdGear | firstGear
     }
 
     @Unroll
     def "should downshift one gear from #input to #output when braking engine medium RPM"() {
 
-        given: "fourth gear, sport mode, medium RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, medium RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(mediumRpm)
 
         when: "brake force applied"
@@ -287,9 +303,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift one gear from #input to #output when braking engine low RPM"() {
 
-        given: "fourth gear, sport mode, medium RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, medium RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(lowRpm)
 
         when: "brake force applied"
@@ -306,9 +322,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should downshift one gear from #input to #output when braking engine very low RPM"() {
 
-        given: "fourth gear, sport mode, very low RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, very low RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(veryLowRpm)
 
         when: "brake force applied"
@@ -325,9 +341,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should not downshift running on first gear when braking engine medium RPM"() {
 
-        given: "first gear, sport mode, medium RPM"
+        given: "first gear, sport mode, aggressive mode soft, medium RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(mediumRpm)
 
         when: "brake force applied"
@@ -344,9 +360,9 @@ class GearboxDriverDriveStateSportModeSpec extends Specification implements Prep
     @Unroll
     def "should not downshift when braking engine high RPM"() {
 
-        given: "fourth gear, sport mode, high RPM"
+        given: "fourth gear, sport mode, aggressive mode soft, high RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportMode(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(highRpm)
 
         when: "brake force applied"

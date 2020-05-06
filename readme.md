@@ -6,4 +6,6 @@ Project submitted to participate in competition announced by **https://devupgrad
 ## Technologies
 
     * Java 11
+    * Vavr
+    * Google Guava
     * Spock

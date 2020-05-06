@@ -18,7 +18,7 @@ final class EcoCalculator implements Calculator {
                 return UPSHIFT;
             }
 
-            if (shouldDownshifthWhileAccelerating(statusData)) {
+            if (shouldDownshiftWhileAccelerating(statusData)) {
                 return DOWNSHIFT;
             }
 
@@ -42,7 +42,7 @@ final class EcoCalculator implements Calculator {
         return Predicates.allOf(isThrottleApplied(), shouldUpShift()).test(statusData);
     }
 
-    private boolean shouldDownshifthWhileAccelerating(VehicleStatusData statusData) {
+    private boolean shouldDownshiftWhileAccelerating(VehicleStatusData statusData) {
         return Predicates.allOf(isThrottleApplied(), shouldDownShift()).test(statusData);
     }
 

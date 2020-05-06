@@ -7,7 +7,10 @@ import pl.mkjb.gearbox.external.shared.RevGauge
 import pl.mkjb.gearbox.external.shared.ThrottleThreshold
 import pl.mkjb.gearbox.gearbox.GearboxDriver
 import pl.mkjb.gearbox.gearbox.shared.Gear
+import pl.mkjb.gearbox.settings.AggressiveMode
 
+import static pl.mkjb.gearbox.settings.AggressiveMode.HARD
+import static pl.mkjb.gearbox.settings.AggressiveMode.SOFT
 import static pl.mkjb.gearbox.settings.Mode.ECO
 import static pl.mkjb.gearbox.settings.Mode.SPORT
 import static pl.mkjb.gearbox.settings.Setting.*
@@ -40,6 +43,10 @@ trait PreparedInput {
     RevGauge lowRpm = new RevGauge(LOW_RPM)
     RevGauge mediumRpm = new RevGauge(MEDIUM_RPM)
     RevGauge highRpm = new RevGauge(HIGH_RPM)
+    RevGauge veryHighRpm = new RevGauge(VERY_HIGH_RPM)
+
+    AggressiveMode softChange = SOFT
+    AggressiveMode hardChange = HARD
 
     def changeToDrive(GearboxDriver gearboxDriver) {
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
@@ -54,10 +61,19 @@ trait PreparedInput {
         gearboxDriver.onDriveModeChange(ECO)
     }
 
-    def changeToDriveSportMode(GearboxDriver gearboxDriver) {
+    def changeToDriveSportModeSoftChange(GearboxDriver gearboxDriver) {
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(DRIVE)
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(SPORT)
+        gearboxDriver.onGearChangeMode(softChange)
+    }
+
+    def changeToDriveSportModeHardChange(GearboxDriver gearboxDriver) {
+        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        gearboxDriver.onGearStickPositionChange(DRIVE)
+        gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
+        gearboxDriver.onDriveModeChange(SPORT)
+        gearboxDriver.onGearChangeMode(hardChange)
     }
 }

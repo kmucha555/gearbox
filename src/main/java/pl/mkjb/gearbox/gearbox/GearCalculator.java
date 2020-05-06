@@ -3,6 +3,7 @@ package pl.mkjb.gearbox.gearbox;
 import io.vavr.Function1;
 import io.vavr.Function2;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import pl.mkjb.gearbox.gearbox.calculators.CalculatorFacade;
 import pl.mkjb.gearbox.gearbox.shared.Gear;
 import pl.mkjb.gearbox.gearbox.shared.VehicleStatusData;
@@ -22,26 +23,48 @@ class GearCalculator {
 
     public Function1<VehicleStatusData, Gear> calculate() {
         return statusData ->
-                newGear().apply(statusData, selectGearboxState()
-                        .apply(statusData.state)
-                        .apply(statusData.mode)
-                        .apply(statusData));
+                newGear().apply(
+                        validateCalculatedGear().apply(statusData, selectGearboxState()
+                                .apply(statusData.state)
+                                .apply(statusData.mode)
+                                .apply(statusData))
+                );
     }
 
-    private Function2<VehicleStatusData, Integer, Gear> newGear() {
+    private Function1<Integer, Gear> newGear() {
+        return Gear::new;
+    }
+
+    //TODO refactor this method
+    private Function2<VehicleStatusData, Integer, Integer> validateCalculatedGear() {
         return (statusData, gearChangeScope) -> {
-            var newGear = statusData.currentGear.gear + gearChangeScope;
+            val currentGear = statusData.currentGear.gear;
+            var newGear = currentGear + gearChangeScope;
 
-            if (gearChangeScope == KICKDOWN && isInDrive().test(statusData) && isNotValidGear().test(newGear)) {
-                newGear = statusData.currentGear.gear + DOWNSHIFT;
+            if (isInDrive().test(statusData)) {
+                if (isDoubleKickdown().test(gearChangeScope) && isValidGear().negate().test(newGear)) {
+                    newGear = currentGear + DOWNSHIFT;
+                    if (isValidGear().negate().test(newGear)) {
+                        return currentGear;
+                    }
+                    return newGear;
+                }
+
+                if (isValidGear().negate().test(newGear)) {
+                    return currentGear;
+                }
             }
 
-            if (isInDrive().test(statusData) && isNotValidGear().test(newGear)) {
-                return new Gear(statusData.currentGear.gear);
-            }
-
-            return new Gear(newGear);
+            return newGear;
         };
+    }
+
+    private Predicate<Integer> isDoubleKickdown() {
+        return gearChangeScope -> gearChangeScope == KICKDOWN;
+    }
+
+    private Predicate<Integer> isValidGear() {
+        return gear -> gear >= FIRST_GEAR && gear <= MAX_GEAR_NUMBER;
     }
 
     private Function1<State, Function1<Mode, Function1<VehicleStatusData, Integer>>> selectGearboxState() {
@@ -73,9 +96,5 @@ class GearCalculator {
 
     private Predicate<VehicleStatusData> isInDrive() {
         return statusData -> statusData.state.equals(DRIVE);
-    }
-
-    private Predicate<Integer> isNotValidGear() {
-        return newGear -> newGear < FIRST_GEAR || newGear > MAX_GEAR_NUMBER;
     }
 }
