@@ -4,7 +4,7 @@ import pl.mkjb.gearbox.PreparedInput
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class GearboxDriverDriveStateEcoModeSpec extends Specification implements PreparedInput {
+class GearboxDriverDriveStateEcoModeSoftChangeSpec extends Specification implements PreparedInput {
     Gearbox gearbox = Mock()
     GearboxDriver gearboxDriver
 
@@ -13,56 +13,56 @@ class GearboxDriverDriveStateEcoModeSpec extends Specification implements Prepar
     }
 
     @Unroll
-    def "should downshift only one gear in eco mode when #throttle.level% throttle applied running on very low RPM"() {
+    def "should downshift one gear from #input to #output when #throttle.level% throttle engine very low RPM"() {
 
-        given: "running on fourth gear, eco mode is on, engine is on very low RPM"
-        gearbox.currentGear() >> fourthGear
-        changeToDriveEcoMode(gearboxDriver)
+        given: "fourth gear, eco mode, aggressive mode soft, very low RPM"
+        gearbox.currentGear() >> input
+        changeToDriveEcoModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(veryLowRpm)
 
-        when: "throttle is changing"
+        when: "throttle is applied"
         gearboxDriver.onThrottleChange(throttle)
 
         then: "gearbox engages third gear"
         1 * gearbox.changeGear(output)
 
         where:
-        throttle               | output
-        belowKickDownThrottle  | thirdGear
-        singleKickDownThrottle | thirdGear
-        doubleKickDownThrottle | thirdGear
+        throttle               | input      | output
+        belowKickDownThrottle  | fourthGear | thirdGear
+        singleKickDownThrottle | fourthGear | thirdGear
+        doubleKickDownThrottle | fourthGear | thirdGear
     }
 
     @Unroll
-    def "should upshift one gear in eco mode when #throttle.level% throttle applied running on medium RPM"() {
+    def "should upshift one gear from #input to #output when #throttle.level% throttle engine medium RPM"() {
 
-        given: "running on third gear, eco mode is on, engine is on medium RPM"
-        gearbox.currentGear() >> thirdGear
-        changeToDriveEcoMode(gearboxDriver)
+        given: "third gear, eco mode, aggressive mode soft, medium RPM"
+        gearbox.currentGear() >> input
+        changeToDriveEcoModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(mediumRpm)
 
-        when: "throttle is changing"
+        when: "throttle is applied"
         gearboxDriver.onThrottleChange(throttle)
 
         then: "gearbox engages forth gear"
         1 * gearbox.changeGear(output)
 
         where:
-        throttle               | output
-        belowKickDownThrottle  | fourthGear
-        singleKickDownThrottle | fourthGear
-        doubleKickDownThrottle | fourthGear
+        throttle               | input     | output
+        belowKickDownThrottle  | thirdGear | fourthGear
+        singleKickDownThrottle | thirdGear | fourthGear
+        doubleKickDownThrottle | thirdGear | fourthGear
     }
 
     @Unroll
-    def "should not change gear in eco mode when #throttle.level% throttle applied running on medium RPM"() {
+    def "should not change gear when #throttle.level% throttle engine medium RPM"() {
 
-        given: "running on max gear, eco mode is on, engine is on medium RPM"
+        given: "max gear, eco mode, aggressive mode soft, medium RPM"
         gearbox.currentGear() >> maxGear
-        changeToDriveEcoMode(gearboxDriver)
+        changeToDriveEcoModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(mediumRpm)
 
-        when: "throttle is changing"
+        when: "throttle is applied"
         gearboxDriver.onThrottleChange(throttle)
 
         then: "gearbox engages forth gear"
@@ -76,14 +76,14 @@ class GearboxDriverDriveStateEcoModeSpec extends Specification implements Prepar
     }
 
     @Unroll
-    def "should not change gear in eco mode when #throttle.level% throttle applied running on low RPM"() {
+    def "should not change gear when #throttle.level% throttle engine on low RPM"() {
 
-        given: "running on fourth gear, eco mode is on, engine is on low RPM"
+        given: "fourth gear, eco mode, aggressive mode soft, low RPM"
         gearbox.currentGear() >> fourthGear
-        changeToDriveEcoMode(gearboxDriver)
+        changeToDriveEcoModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(lowRpm)
 
-        when: "throttle is changing"
+        when: "throttle is applied"
         gearboxDriver.onThrottleChange(throttle)
 
         then: "gearbox engages forth gear"
@@ -96,11 +96,11 @@ class GearboxDriverDriveStateEcoModeSpec extends Specification implements Prepar
         doubleKickDownThrottle | fourthGear
     }
 
-    def "should downshift one gear in eco mode when brake force is applied running on low RPM"() {
+    def "should downshift one gear from #input to #output when braking engine on low RPM"() {
 
-        given: "running on fourth gear, eco mode is on, engine is on low RPM"
-        gearbox.currentGear() >> fourthGear
-        changeToDriveEcoMode(gearboxDriver)
+        given: "fourth gear, eco mode, aggressive mode soft, low RPM"
+        gearbox.currentGear() >> input
+        changeToDriveEcoModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(lowRpm)
 
         when: "brake force is applied"
@@ -110,15 +110,15 @@ class GearboxDriverDriveStateEcoModeSpec extends Specification implements Prepar
         1 * gearbox.changeGear(output)
 
         where:
-        brake              | output
-        halfBrakeThreshold | thirdGear
+        brake              | input      | output
+        halfBrakeThreshold | fourthGear | thirdGear
     }
 
-    def "should not change gear in eco mode when brake force is applied running on medium RPM"() {
+    def "should not change gear when braking engine medium RPM"() {
 
-        given: "running on fourth gear, eco mode is on, engine is on medium RPM"
+        given: "fourth gear, eco mode, aggressive mode soft, medium RPM"
         gearbox.currentGear() >> fourthGear
-        changeToDriveEcoMode(gearboxDriver)
+        changeToDriveEcoModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(mediumRpm)
 
         when: "brake force is applied"
@@ -132,11 +132,11 @@ class GearboxDriverDriveStateEcoModeSpec extends Specification implements Prepar
         halfBrakeThreshold | fourthGear
     }
 
-    def "should not change gear in eco mode when brake force is applied running on very low RPM"() {
+    def "should not change gear when braking engine very low RPM"() {
 
-        given: "running on first gear, eco mode is on, engine is on very low RPM"
+        given: "first gear, eco mode, aggressive mode soft, very low RPM"
         gearbox.currentGear() >> firstGear
-        changeToDriveEcoMode(gearboxDriver)
+        changeToDriveEcoModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(veryLowRpm)
 
         when: "brake force is applied"

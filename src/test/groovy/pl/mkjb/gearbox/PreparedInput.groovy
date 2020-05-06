@@ -11,6 +11,7 @@ import pl.mkjb.gearbox.settings.AggressiveMode
 
 import static pl.mkjb.gearbox.settings.AggressiveMode.HARD
 import static pl.mkjb.gearbox.settings.AggressiveMode.SOFT
+import static pl.mkjb.gearbox.settings.Mode.COMFORT
 import static pl.mkjb.gearbox.settings.Mode.ECO
 import static pl.mkjb.gearbox.settings.Mode.SPORT
 import static pl.mkjb.gearbox.settings.Setting.*
@@ -54,11 +55,20 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
     }
 
-    def changeToDriveEcoMode(GearboxDriver gearboxDriver) {
+    def changeToDriveEcoModeSoftChange(GearboxDriver gearboxDriver) {
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(DRIVE)
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(ECO)
+        gearboxDriver.onGearChangeMode(softChange)
+    }
+
+    def changeToDriveEcoModeHardChange(GearboxDriver gearboxDriver) {
+        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        gearboxDriver.onGearStickPositionChange(DRIVE)
+        gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
+        gearboxDriver.onDriveModeChange(ECO)
+        gearboxDriver.onGearChangeMode(hardChange)
     }
 
     def changeToDriveSportModeSoftChange(GearboxDriver gearboxDriver) {
@@ -74,6 +84,22 @@ trait PreparedInput {
         gearboxDriver.onGearStickPositionChange(DRIVE)
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(SPORT)
+        gearboxDriver.onGearChangeMode(hardChange)
+    }
+
+    def changeToDriveComfortModeSoftChange(GearboxDriver gearboxDriver) {
+        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        gearboxDriver.onGearStickPositionChange(DRIVE)
+        gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
+        gearboxDriver.onDriveModeChange(COMFORT)
+        gearboxDriver.onGearChangeMode(softChange)
+    }
+
+    def changeToDriveComfortModeHardChange(GearboxDriver gearboxDriver) {
+        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        gearboxDriver.onGearStickPositionChange(DRIVE)
+        gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
+        gearboxDriver.onDriveModeChange(COMFORT)
         gearboxDriver.onGearChangeMode(hardChange)
     }
 }

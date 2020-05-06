@@ -45,10 +45,7 @@ final class CommonCalculator {
     }
 
     public static Predicate<VehicleStatusData> shouldUpShift() {
-        return statusData -> {
-            System.out.println(statusData.revGauge.actualRevs);
-            return statusData.revGauge.actualRevs >= newRevsLimit().apply(statusData, driveModeSettings().apply(statusData).upshiftRevs);
-        };
+        return statusData -> statusData.revGauge.actualRevs >= newRevsLimit().apply(statusData, driveModeSettings().apply(statusData).upshiftRevs);
     }
 
     public static Predicate<VehicleStatusData> shouldDownShift() {
