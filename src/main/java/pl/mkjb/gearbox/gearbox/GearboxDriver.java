@@ -1,6 +1,8 @@
 package pl.mkjb.gearbox.gearbox;
 
 import com.google.common.eventbus.Subscribe;
+import io.vavr.control.Either;
+import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -46,40 +48,62 @@ public final class GearboxDriver {
     @Subscribe
     public void onEngineRevsChange(RevGauge revGauge) {
         this.revGauge = revGauge;
-        automaticGearChange();
+
+        if (isInAutomaticGearChangeState()) {
+            automaticGearChange();
+        }
     }
 
     @Subscribe
     public void onGearStickPositionChange(State expectedState) {
-        this.state = this.gearboxState.changeGearboxState().apply(expectedState, vehicleStatusData());
+        final Either<Try<IllegalStateException>, State> newGearboxState = this.gearboxState.changeGearboxState().apply(expectedState, vehicleStatusData());
 
-        if (this.state != MANUAL) {
-            automaticGearChange();
+        if (newGearboxState.isRight()) {
+            this.state = newGearboxState.get();
+
+            if (isInAutomaticGearChangeState()) {
+                automaticGearChange();
+            }
+
+        } else {
+            throw newGearboxState.getLeft().get();
         }
     }
 
     @Subscribe
     public void onDriveModeChange(Mode mode) {
         this.mode = mode;
-        automaticGearChange();
+
+        if (isInAutomaticGearChangeState()) {
+            automaticGearChange();
+        }
     }
 
     @Subscribe
     public void onGearChangeMode(AggressiveMode aggressiveMode) {
         this.aggressiveMode = aggressiveMode;
-        automaticGearChange();
+
+        if (isInAutomaticGearChangeState()) {
+            automaticGearChange();
+        }
     }
 
     @Subscribe
     public void onThrottleChange(ThrottleThreshold throttleThreshold) {
         this.throttleThreshold = throttleThreshold;
-        automaticGearChange();
+
+        if (isInAutomaticGearChangeState()) {
+            automaticGearChange();
+        }
     }
 
     @Subscribe
     public void onBrakeApplied(BrakeThreshold brakeThreshold) {
         this.brakeThreshold = brakeThreshold;
-        automaticGearChange();
+
+        if (isInAutomaticGearChangeState()) {
+            automaticGearChange();
+        }
     }
 
     @Subscribe
@@ -90,10 +114,22 @@ public final class GearboxDriver {
     @Subscribe
     public void onPaddleUse(Gear gearChangeScope) {
         if (this.state == DRIVE) {
-            this.state = MANUAL;
-            val newGear = this.manualGearChangeCalculator.calculate().apply(gearChangeScope, vehicleStatusData());
-            this.gearbox.changeGear(newGear);
+            final Either<Try<IllegalStateException>, State> newGearboxState =
+                    this.gearboxState.changeGearboxState().apply(MANUAL, vehicleStatusData());
+
+            if (newGearboxState.isRight()) {
+                this.state = newGearboxState.get();
+            } else {
+                throw newGearboxState.getLeft().get();
+            }
         }
+
+        val newGear = this.manualGearChangeCalculator.calculate().apply(gearChangeScope, vehicleStatusData());
+        this.gearbox.changeGear(newGear);
+    }
+
+    private boolean isInAutomaticGearChangeState() {
+        return this.state != MANUAL;
     }
 
     private void automaticGearChange() {

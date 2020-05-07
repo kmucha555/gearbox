@@ -17,13 +17,13 @@ import static pl.mkjb.gearbox.settings.State.*;
 
 final class GearboxState {
 
-    public Function2<State, VehicleStatusData, State> changeGearboxState() {
+    public Function2<State, VehicleStatusData, Either<Try<IllegalStateException>, State>> changeGearboxState() {
         return (newState, vehicleStatusData) ->
                 selectGearboxState().apply(newState)
                         .apply(vehicleStatusData);
     }
 
-    private Function1<State, Function1<VehicleStatusData, State>> selectGearboxState() {
+    private Function1<State, Function1<VehicleStatusData, Either<Try<IllegalStateException>, State>>> selectGearboxState() {
         return state -> Match(state).of(
                 Case($(DRIVE), drive()),
                 Case($(PARK), park()),
@@ -32,41 +32,41 @@ final class GearboxState {
                 Case($(MANUAL), manual()));
     }
 
-    private Function1<VehicleStatusData, State> drive() {
+    private Function1<VehicleStatusData, Either<Try<IllegalStateException>, State>> drive() {
         return statusData -> {
             if (isBrakeApplied().test(statusData)) {
-                return DRIVE;
+                return Either.right(DRIVE);
             }
 
-            throw new IllegalStateException("Can't changeGearboxState to drive");
+            return Either.left(Try.ofSupplier(() -> new IllegalStateException("Can't changeGearboxState to drive")));
         };
     }
 
-    private Function1<VehicleStatusData, State> park() {
+    private Function1<VehicleStatusData, Either<Try<IllegalStateException>, State>> park() {
         return statusData -> {
             if (Predicates.allOf(isBrakeApplied(), isVehicleStopped()).test(statusData)) {
-                return PARK;
+                return Either.right(PARK);
             }
 
-            throw new IllegalStateException("Can't changeGearboxState to park");
+            return Either.left(Try.ofSupplier(() -> new IllegalStateException("Can't changeGearboxState to park")));
         };
     }
 
-    private Function1<VehicleStatusData, State> neutral() {
-        return vehicleStatusData -> NEUTRAL;
+    private Function1<VehicleStatusData, Either<Try<IllegalStateException>, State>> neutral() {
+        return vehicleStatusData -> Either.right(NEUTRAL);
     }
 
-    private Function1<VehicleStatusData, State> reverse() {
+    private Function1<VehicleStatusData, Either<Try<IllegalStateException>, State>> reverse() {
         return statusData -> {
             if (isBrakeApplied().test(statusData)) {
-                return REVERSE;
+                return Either.right(REVERSE);
             }
 
-            throw new IllegalStateException("Can't changeGearboxState to reverse");
+            return Either.left(Try.ofSupplier(() -> new IllegalStateException("Can't changeGearboxState to reverse")));
         };
     }
 
-    private Function1<VehicleStatusData, Either<Try, State>> manual() {
+    private Function1<VehicleStatusData, Either<Try<IllegalStateException>, State>> manual() {
         return statusData -> {
             if (Predicates.allOf(isInDrive(), isVehicleStopped().negate()).test(statusData)) {
                 return Either.right(MANUAL);

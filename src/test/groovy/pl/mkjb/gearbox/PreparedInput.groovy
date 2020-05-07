@@ -54,6 +54,7 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
         gearboxDriver.onGearStickPositionChange(DRIVE)
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
     }
 
     def changeToDriveEcoModeSoftChange(GearboxDriver gearboxDriver) {
@@ -62,6 +63,7 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(ECO)
         gearboxDriver.onGearChangeMode(softChange)
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
     }
 
     def changeToDriveEcoModeHardChange(GearboxDriver gearboxDriver) {
@@ -70,6 +72,7 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(ECO)
         gearboxDriver.onGearChangeMode(hardChange)
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
     }
 
     def changeToDriveSportModeSoftChange(GearboxDriver gearboxDriver) {
@@ -78,6 +81,7 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(SPORT)
         gearboxDriver.onGearChangeMode(softChange)
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
     }
 
     def changeToDriveSportModeHardChange(GearboxDriver gearboxDriver) {
@@ -86,6 +90,7 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(SPORT)
         gearboxDriver.onGearChangeMode(hardChange)
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
     }
 
     def changeToDriveComfortModeSoftChange(GearboxDriver gearboxDriver) {
@@ -94,6 +99,7 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(COMFORT)
         gearboxDriver.onGearChangeMode(softChange)
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
     }
 
     def changeToDriveComfortModeHardChange(GearboxDriver gearboxDriver) {
@@ -102,6 +108,7 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(COMFORT)
         gearboxDriver.onGearChangeMode(hardChange)
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
     }
 
     def changeToManual(GearboxDriver gearboxDriver) {
