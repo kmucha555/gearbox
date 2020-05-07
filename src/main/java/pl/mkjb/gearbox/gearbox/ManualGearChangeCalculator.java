@@ -82,12 +82,12 @@ class ManualGearChangeCalculator {
         return givenGear -> givenGear.gear == UPSHIFT;
     }
 
-    private Predicate<VehicleStatusData> isOverUpshiftRevsLimit() {
-        return statusData -> statusData.revGauge.actualRevs >= REVS_SCOPE.minimalUpshiftRevs;
-    }
-
     private Predicate<Gear> isDownshifting() {
         return givenGear -> givenGear.gear == DOWNSHIFT;
+    }
+
+    private Predicate<VehicleStatusData> isOverUpshiftRevsLimit() {
+        return statusData -> statusData.revGauge.actualRevs >= REVS_SCOPE.minimalUpshiftRevs;
     }
 
     private Predicate<VehicleStatusData> isOverDownshiftRevsLimit() {

@@ -16,6 +16,7 @@ import static pl.mkjb.gearbox.settings.Mode.ECO
 import static pl.mkjb.gearbox.settings.Mode.SPORT
 import static pl.mkjb.gearbox.settings.Setting.*
 import static pl.mkjb.gearbox.settings.State.DRIVE
+import static pl.mkjb.gearbox.settings.State.MANUAL
 
 @CompileStatic
 trait PreparedInput {
@@ -101,5 +102,12 @@ trait PreparedInput {
         gearboxDriver.onBrakeApplied(zeroBrakeThreshold)
         gearboxDriver.onDriveModeChange(COMFORT)
         gearboxDriver.onGearChangeMode(hardChange)
+    }
+
+    def changeToManual(GearboxDriver gearboxDriver) {
+        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        gearboxDriver.onGearStickPositionChange(DRIVE)
+        gearboxDriver.onLinearSpeedChange(someLinearSpeed)
+        gearboxDriver.onGearStickPositionChange(MANUAL)
     }
 }

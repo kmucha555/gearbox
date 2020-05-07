@@ -28,10 +28,12 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         gearboxDriver.onPaddleUse(upshift)
 
         then: "gearbox state is switched to manual"
-        gearboxDriver.checkGearboxState() == output
+        gearboxDriver.checkGearboxState() == expected_state
+        and:
+        1 * gearbox.changeGear(_)
 
         where:
-        drive_mode | output
+        drive_mode | expected_state
         ECO        | MANUAL
         COMFORT    | MANUAL
         SPORT      | MANUAL
@@ -118,7 +120,7 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
     }
 
     @Unroll
-    def "should downshift one gear from #input to #output using paddles"() {
+    def "should downshift from #input to #output using paddles"() {
 
         given:
         gearbox.currentGear() >> input
@@ -174,4 +176,26 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         input     | output
         firstGear | firstGear
     }
+
+    @Unroll
+    def "should downshift in MANUAL from #input to #output using paddles"() {
+
+        given:
+        gearbox.currentGear() >> input
+        changeToManual(gearboxDriver)
+        gearboxDriver.onEngineRevsChange(mediumRpm)
+
+        when:
+        gearboxDriver.onPaddleUse(downshift)
+
+        then:
+        1 * gearbox.changeGear(output)
+
+        where:
+        input      | output
+        secondGear | firstGear
+        fourthGear | thirdGear
+    }
+
+
 }

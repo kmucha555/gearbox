@@ -52,7 +52,10 @@ public final class GearboxDriver {
     @Subscribe
     public void onGearStickPositionChange(State expectedState) {
         this.state = this.gearboxState.changeGearboxState().apply(expectedState, vehicleStatusData());
-        automaticGearChange();
+
+        if (this.state != MANUAL) {
+            automaticGearChange();
+        }
     }
 
     @Subscribe
