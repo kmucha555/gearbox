@@ -4,9 +4,8 @@ import pl.mkjb.gearbox.PreparedInput
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static pl.mkjb.gearbox.settings.Mode.COMFORT
-import static pl.mkjb.gearbox.settings.Mode.ECO
-import static pl.mkjb.gearbox.settings.Mode.SPORT
+import static pl.mkjb.gearbox.settings.AggressiveMode.*
+import static pl.mkjb.gearbox.settings.Mode.*
 import static pl.mkjb.gearbox.settings.State.MANUAL
 
 class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
@@ -17,7 +16,7 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         gearboxDriver = GearboxDriver.powerUpGearbox(gearbox)
     }
 
-    def "should change gearbox to MANUAL when paddle is used no matter which drive mode is used (#drive_mode)"() {
+    def "should change gearbox state to MANUAL when paddle is used no matter which drive mode is used (#drive_mode)"() {
 
         given: "gearbox in drive mode on third gear"
         gearbox.currentGear() >> thirdGear
@@ -36,6 +35,27 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         ECO        | MANUAL
         COMFORT    | MANUAL
         SPORT      | MANUAL
+    }
+
+    def "should change gearbox state to MANUAL when paddle is used no matter which aggressive mode is used (#aggressive_mode)"() {
+
+        given: "gearbox in drive mode on third gear"
+        gearbox.currentGear() >> thirdGear
+        changeToDrive(gearboxDriver)
+        gearboxDriver.onGearChangeMode(aggressive_mode)
+        gearboxDriver.onEngineRevsChange(mediumRpm)
+
+        when: "paddle is used"
+        gearboxDriver.onPaddleUse(upshift)
+
+        then: "gearbox state is switched to manual"
+        gearboxDriver.checkGearboxState() == output
+
+        where:
+        aggressive_mode | output
+        SOFT            | MANUAL
+        HARD            | MANUAL
+        EXTREME         | MANUAL
     }
 
     @Unroll
@@ -93,7 +113,7 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         1 * gearbox.changeGear(output)
 
         where:
-        input     | output
+        input   | output
         maxGear | maxGear
     }
 
@@ -112,7 +132,7 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         1 * gearbox.changeGear(output)
 
         where:
-        input     | output
+        input      | output
         secondGear | firstGear
         fourthGear | thirdGear
     }
@@ -132,7 +152,7 @@ class GearboxDriverPaddleSpec extends Specification implements PreparedInput {
         1 * gearbox.changeGear(output)
 
         where:
-        input     | output
+        input      | output
         fourthGear | fourthGear
         secondGear | secondGear
     }

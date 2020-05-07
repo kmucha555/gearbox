@@ -13,11 +13,11 @@ final class SportCalculator implements Calculator {
     public Function1<VehicleStatusData, Integer> calculate() {
         return statusData -> {
 
-            if (shouldMakeDoubleKickdown(statusData)) {
+            if (isPossibleToMakeDoubleKickdown(statusData)) {
                 return KICKDOWN;
             }
 
-            if (shouldMakeSingleKickdown(statusData)) {
+            if (isPossibleToMakeSingleKickdown(statusData)) {
                 return DOWNSHIFT;
             }
 
@@ -45,11 +45,11 @@ final class SportCalculator implements Calculator {
         };
     }
 
-    private boolean shouldMakeDoubleKickdown(VehicleStatusData statusData) {
+    private boolean isPossibleToMakeDoubleKickdown(VehicleStatusData statusData) {
         return Predicates.allOf(isThrottleThresholdOverDoubleKickdownLimit(), isBelowDownshiftRevsLimit()).test(statusData);
     }
 
-    private boolean shouldMakeSingleKickdown(VehicleStatusData statusData) {
+    private boolean isPossibleToMakeSingleKickdown(VehicleStatusData statusData) {
         return Predicates.allOf(isThrottleThresholdOverSingleKickdownLimit(), isBelowDownshiftRevsLimit()).test(statusData);
     }
 

@@ -5,8 +5,6 @@ import pl.mkjb.gearbox.gearbox.shared.Gear;
 
 @RequiredArgsConstructor
 class Gearbox {
-    private final int minGear;
-    private final int maxGear;
     private int currentGear = 0;
 
     public void changeGear(Gear gear) {
@@ -16,5 +14,4 @@ class Gearbox {
     public Gear currentGear() {
         return new Gear(currentGear);
     }
-
 }

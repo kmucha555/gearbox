@@ -262,23 +262,23 @@ class GearboxDriverDriveStateSportModeSoftChangeSpec extends Specification imple
     }
 
     @Unroll
-    def "should kickdown from #input to #output when #throttle% throttle engine very high RPM"() {
+    def "should upshift from #input to #output when #throttle% throttle engine very high RPM"() {
 
         given: "third gear, sport mode, aggressive mode soft, very high RPM"
         gearbox.currentGear() >> input
-        changeToDriveSportModeHardChange(gearboxDriver)
+        changeToDriveSportModeSoftChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(veryHighRpm)
 
         when: "throttle is applied"
         gearboxDriver.onThrottleChange(throttle)
 
-        then: "gearbox engages fourth gear"
+        then: "gearbox stays in third gear"
         1 * gearbox.changeGear(output)
 
         where:
         throttle               | input     | output
-        singleKickDownThrottle | thirdGear | secondGear
-        doubleKickDownThrottle | thirdGear | firstGear
+        singleKickDownThrottle | thirdGear | fourthGear
+        doubleKickDownThrottle | thirdGear | fourthGear
     }
 
     @Unroll
