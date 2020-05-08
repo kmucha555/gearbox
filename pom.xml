@@ -5,20 +5,34 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>pl.mkjb</groupId>
-    <artifactId>Gearbox</artifactId>
+    <artifactId>gearbox</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <packaging>jar</packaging>
+
     <properties>
-        <java.version>11</java.version>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <spock.version>2.0-M2-groovy-2.5</spock.version>
         <vavr.version>0.10.2</vavr.version>
+        <lombok.version>1.18.10</lombok.version>
+        <guava.version>29.0-jre</guava.version>
+        <cglib-nodep.version>3.3.0</cglib-nodep.version>
+        <objenesis.version>2.5.1</objenesis.version>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.vavr</groupId>
@@ -31,16 +45,22 @@
             <scope>test</scope>
             <version>${spock.version}</version>
         </dependency>
+        <dependency> <!-- enables mocking of classes (in addition to interfaces) -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>${cglib-nodep.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency> <!-- enables mocking of classes without default constructor (together with CGLIB) -->
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>${objenesis.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <!-- Mandatory plugins for using Spock -->
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
@@ -56,5 +76,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
