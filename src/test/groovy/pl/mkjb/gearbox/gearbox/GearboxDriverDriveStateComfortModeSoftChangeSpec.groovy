@@ -13,340 +13,174 @@ class GearboxDriverDriveStateComfortModeSoftChangeSpec extends Specification imp
     }
 
     @Unroll
-    def "should upshift one gear from #input to #output when #throttle% throttle engine medium RPM"() {
-
-        given: "third gear, comfort mode, aggressive mode soft, medium RPM"
-        gearbox.currentGear() >> input
+    def "should kickdown from #current_gear to #expected_gear when #throttle throttle, engine #engine_rpm RPM"() {
+        given: "drive mode comfort, gear change mode soft"
+        gearbox.currentGear() >> current_gear
         changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(mediumRpm)
+        gearboxDriver.onEngineRevsChange(engine_rpm)
 
         when: "throttle is applied"
         gearboxDriver.onThrottleChange(throttle)
 
-        then: "gearbox engages fourth gear"
-        1 * gearbox.changeGear(output)
+        then: "gearbox engages expected gear"
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        throttle              | input     | output
-        belowKickDownThrottle | thirdGear | fourthGear
+        throttle               | engine_rpm | current_gear | expected_gear
+        singleKickDownThrottle | veryLowRpm | thirdGear    | secondGear
+        singleKickDownThrottle | lowRpm     | thirdGear    | secondGear
+        singleKickDownThrottle | mediumRpm  | thirdGear    | secondGear
+
+        doubleKickDownThrottle | veryLowRpm | fourthGear   | thirdGear
+        doubleKickDownThrottle | veryLowRpm | secondGear   | firstGear
+        doubleKickDownThrottle | lowRpm     | fourthGear   | thirdGear
+        doubleKickDownThrottle | lowRpm     | secondGear   | firstGear
+        doubleKickDownThrottle | mediumRpm  | thirdGear    | secondGear
+        doubleKickDownThrottle | mediumRpm  | secondGear   | firstGear
     }
 
     @Unroll
-    def "should downshift one gear from #input to #output when #throttle% throttle engine medium RPM"() {
+    def "should downshift from #current_gear to #expected_gear when #throttle throttle, engine #engine_rpm RPM"() {
 
-        given: "third gear, comfort mode, aggressive mode soft, medium RPM"
-        gearbox.currentGear() >> input
+        given: "drive mode comfort, gear change mode soft"
+        gearbox.currentGear() >> current_gear
         changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(mediumRpm)
+        gearboxDriver.onEngineRevsChange(engine_rpm)
 
         when: "throttle is applied"
         gearboxDriver.onThrottleChange(throttle)
 
-        then: "gearbox engages second gear"
-        1 * gearbox.changeGear(output)
+        then: "gearbox engages expected gear"
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        throttle               | input     | output
-        singleKickDownThrottle | thirdGear | secondGear
-        doubleKickDownThrottle | thirdGear | secondGear
+        throttle               | engine_rpm | current_gear | expected_gear
+        belowKickDownThrottle  | veryLowRpm | fourthGear   | thirdGear
+        belowKickDownThrottle  | veryLowRpm | secondGear   | firstGear
+
+        singleKickDownThrottle | veryLowRpm | fourthGear   | thirdGear
+        singleKickDownThrottle | veryLowRpm | secondGear   | firstGear
+        singleKickDownThrottle | lowRpm     | secondGear   | firstGear
+        singleKickDownThrottle | lowRpm     | fourthGear   | thirdGear
+        singleKickDownThrottle | mediumRpm  | thirdGear    | secondGear
+        singleKickDownThrottle | mediumRpm  | secondGear   | firstGear
+
+        doubleKickDownThrottle | veryLowRpm | fourthGear   | thirdGear
+        doubleKickDownThrottle | veryLowRpm | secondGear   | firstGear
+        doubleKickDownThrottle | lowRpm     | fourthGear   | thirdGear
+        doubleKickDownThrottle | lowRpm     | secondGear   | firstGear
+        doubleKickDownThrottle | mediumRpm  | thirdGear    | secondGear
+        doubleKickDownThrottle | mediumRpm  | secondGear   | firstGear
     }
 
     @Unroll
-    def "should downshift one gear from #input to #output when #throttle% throttle engine low RPM"() {
+    def "should not downshift from #current_gear when #throttle throttle, engine #engine_rpm RPM"() {
 
-        given: "fourth gear, comfort mode, aggressive mode soft, low RPM"
-        gearbox.currentGear() >> input
+        given: "drive mode comfort, gear change mode soft"
+        gearbox.currentGear() >> current_gear
         changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(lowRpm)
+        gearboxDriver.onEngineRevsChange(engine_rpm)
 
         when: "throttle is applied"
         gearboxDriver.onThrottleChange(throttle)
 
-        then: "gearbox engages third gear"
-        1 * gearbox.changeGear(output)
+        then: "gearbox stays in expected gear"
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        throttle               | input      | output
-        singleKickDownThrottle | fourthGear | thirdGear
-        doubleKickDownThrottle | fourthGear | thirdGear
+        throttle               | engine_rpm | current_gear | expected_gear
+        belowKickDownThrottle  | veryLowRpm | firstGear    | firstGear
+        belowKickDownThrottle  | lowRpm     | firstGear    | firstGear
+
+        singleKickDownThrottle | veryLowRpm | firstGear    | firstGear
+        singleKickDownThrottle | lowRpm     | firstGear    | firstGear
+        singleKickDownThrottle | mediumRpm  | firstGear    | firstGear
+
+        doubleKickDownThrottle | veryLowRpm | firstGear    | firstGear
+        doubleKickDownThrottle | lowRpm     | firstGear    | firstGear
+        doubleKickDownThrottle | mediumRpm  | firstGear    | firstGear
     }
 
     @Unroll
-    def "should not upshift one gear from #input to #output when #throttle% throttle engine low RPM"() {
+    def "should not downshift from #current_gear when #brake braking, engine #engine_rpm RPM"() {
 
-        given: "third gear, comfort mode, aggressive mode soft, low RPM"
-        gearbox.currentGear() >> input
+        given: "drive mode comfort, gear change mode soft"
+        gearbox.currentGear() >> current_gear
         changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(lowRpm)
-
-        when: "throttle is applied"
-        gearboxDriver.onThrottleChange(throttle)
-
-        then: "gearbox engages fourth gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle              | input     | output
-        belowKickDownThrottle | thirdGear | thirdGear
-    }
-
-    @Unroll
-    def "should downshift one gear from #input to #output when #throttle% throttle engine very low RPM"() {
-
-        given: "fourth gear, comfort mode, aggressive mode soft, very low RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(veryLowRpm)
-
-        when: "throttle is applied"
-        gearboxDriver.onThrottleChange(throttle)
-
-        then: "gearbox engages second gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle               | input      | output
-        belowKickDownThrottle  | fourthGear | thirdGear
-        singleKickDownThrottle | fourthGear | thirdGear
-        doubleKickDownThrottle | fourthGear | thirdGear
-    }
-
-    @Unroll
-    def "should not downshift from first gear when #throttle% throttle engine very low RPM"() {
-
-        given: "first gear, comfort mode, aggressive mode soft, very low RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(veryLowRpm)
-
-        when: "throttle is applied"
-        gearboxDriver.onThrottleChange(throttle)
-
-        then: "gearbox stays in first gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle               | input     | output
-        belowKickDownThrottle  | firstGear | firstGear
-        singleKickDownThrottle | firstGear | firstGear
-        doubleKickDownThrottle | firstGear | firstGear
-    }
-
-    @Unroll
-    def "should downshift only one gear when running on second gear #throttle% throttle engine very low RPM"() {
-
-        given: "second gear, comfort mode, aggressive mode soft, very low RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(veryLowRpm)
-
-        when: "throttle is applied"
-        gearboxDriver.onThrottleChange(throttle)
-
-        then: "gearbox engages first gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle               | input      | output
-        belowKickDownThrottle  | secondGear | firstGear
-        singleKickDownThrottle | secondGear | firstGear
-        doubleKickDownThrottle | secondGear | firstGear
-    }
-
-    @Unroll
-    def "should downshift only one gear when running on second gear #throttle% throttle engine low RPM"() {
-
-        given: "second gear, comfort mode, aggressive mode soft, low RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(lowRpm)
-
-        when: "throttle is applied"
-        gearboxDriver.onThrottleChange(throttle)
-
-        then: "gearbox engages first gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle               | input      | output
-        singleKickDownThrottle | secondGear | firstGear
-        doubleKickDownThrottle | secondGear | firstGear
-    }
-
-    @Unroll
-    def "should downshift only one gear when running on second gear #throttle% throttle engine medium RPM"() {
-
-        given: "second gear, comfort mode, aggressive mode soft, medium RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(mediumRpm)
-
-        when: "throttle is applied"
-        gearboxDriver.onThrottleChange(throttle)
-
-        then: "gearbox engages first gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle               | input      | output
-        singleKickDownThrottle | secondGear | firstGear
-        doubleKickDownThrottle | secondGear | firstGear
-    }
-
-    @Unroll
-    def "should upshift one gear from #input to #output when #throttle% throttle engine high RPM"() {
-
-        given: "third gear, comfort mode, aggressive mode soft, high RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(highRpm)
-
-        when: "throttle is applied"
-        gearboxDriver.onThrottleChange(throttle)
-
-        then: "gearbox engages fourth gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle               | input     | output
-        belowKickDownThrottle  | thirdGear | fourthGear
-        singleKickDownThrottle | thirdGear | fourthGear
-        doubleKickDownThrottle | thirdGear | fourthGear
-    }
-
-    @Unroll
-    def "should not upshift when on max gear #throttle% throttle engine high RPM"() {
-
-        given: "max gear, comfort mode, aggressive mode soft, high RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(highRpm)
-
-        when: "throttle is applied"
-        gearboxDriver.onThrottleChange(throttle)
-
-        then: "gearbox engages max gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle               | input   | output
-        belowKickDownThrottle  | maxGear | maxGear
-        singleKickDownThrottle | maxGear | maxGear
-        doubleKickDownThrottle | maxGear | maxGear
-    }
-
-    @Unroll
-    def "should kickdown from #input to #output when #throttle% throttle engine very high RPM"() {
-
-        given: "third gear, comfort mode, aggressive mode soft, very high RPM"
-        gearbox.currentGear() >> input
-        changeToDriveSportModeHardChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(veryHighRpm)
-
-        when: "throttle is applied"
-        gearboxDriver.onThrottleChange(throttle)
-
-        then: "gearbox engages fourth gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle               | input     | output
-        singleKickDownThrottle | thirdGear | secondGear
-        doubleKickDownThrottle | thirdGear | firstGear
-    }
-
-    @Unroll
-    def "should not downshift when braking engine medium RPM"() {
-
-        given: "fourth gear, comfort mode, aggressive mode soft, medium RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(mediumRpm)
+        gearboxDriver.onEngineRevsChange(engine_rpm)
 
         when: "brake force applied"
-        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        gearboxDriver.onBrakeApplied(brake)
 
-        then: "gearbox stays in fourth gear"
-        1 * gearbox.changeGear(output)
+        then: "gearbox stays in expected gear"
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        throttle           | input      | output
-        halfBrakeThreshold | fourthGear | fourthGear
+        brake              | engine_rpm  | current_gear | expected_gear
+        halfBrakeThreshold | veryLowRpm  | firstGear    | firstGear
+
+        halfBrakeThreshold | lowRpm      | firstGear    | firstGear
+
+        halfBrakeThreshold | mediumRpm   | fourthGear   | fourthGear
+        halfBrakeThreshold | mediumRpm   | firstGear    | firstGear
+
+        halfBrakeThreshold | highRpm     | fourthGear   | fourthGear
+        halfBrakeThreshold | highRpm     | firstGear    | firstGear
+
+        halfBrakeThreshold | veryHighRpm | fourthGear   | fourthGear
+        halfBrakeThreshold | veryHighRpm | firstGear    | firstGear
     }
 
     @Unroll
-    def "should downshift one gear from #input to #output when braking engine low RPM"() {
+    def "should upshift from #current_gear to #expected_gear when #throttle throttle, engine #engine_rpm RPM"() {
 
-        given: "fourth gear, comfort mode, aggressive mode soft, medium RPM"
-        gearbox.currentGear() >> input
+        given: "drive mode comfort, gear change mode soft"
+        gearbox.currentGear() >> current_gear
         changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(lowRpm)
+        gearboxDriver.onEngineRevsChange(engine_rpm)
 
-        when: "brake force applied"
-        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        when: "throttle is applied"
+        gearboxDriver.onThrottleChange(throttle)
 
-        then: "gearbox engages third gear"
-        1 * gearbox.changeGear(output)
+        then: "gearbox engages expected gear"
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        throttle           | input      | output
-        halfBrakeThreshold | fourthGear | thirdGear
+        throttle               | engine_rpm  | current_gear | expected_gear
+        belowKickDownThrottle  | mediumRpm   | thirdGear    | fourthGear
+        belowKickDownThrottle  | highRpm     | thirdGear    | fourthGear
+        belowKickDownThrottle  | veryHighRpm | thirdGear    | fourthGear
+
+        singleKickDownThrottle | highRpm     | thirdGear    | fourthGear
+        singleKickDownThrottle | veryHighRpm | thirdGear    | fourthGear
+
+        doubleKickDownThrottle | highRpm     | thirdGear    | fourthGear
+        doubleKickDownThrottle | veryHighRpm | thirdGear    | fourthGear
     }
 
     @Unroll
-    def "should downshift one gear from #input to #output when braking engine very low RPM"() {
+    def "should not upshift from #current_gear when #throttle throttle, engine #engine_rpm RPM"() {
 
-        given: "fourth gear, comfort mode, aggressive mode soft, very low RPM"
-        gearbox.currentGear() >> input
+        given: "drive mode comfort, gear change mode soft"
+        gearbox.currentGear() >> current_gear
         changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(veryLowRpm)
+        gearboxDriver.onEngineRevsChange(engine_rpm)
 
-        when: "brake force applied"
-        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
+        when: "throttle is applied"
+        gearboxDriver.onThrottleChange(throttle)
 
-        then: "gearbox engages third gear"
-        1 * gearbox.changeGear(output)
+        then: "gearbox engages expected gear"
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        throttle           | input      | output
-        halfBrakeThreshold | fourthGear | thirdGear
-    }
+        throttle               | engine_rpm | current_gear | expected_gear
+        belowKickDownThrottle  | lowRpm     | thirdGear    | thirdGear
+        belowKickDownThrottle  | lowRpm     | maxGear      | maxGear
+        belowKickDownThrottle  | mediumRpm  | maxGear      | maxGear
+        belowKickDownThrottle  | highRpm    | maxGear      | maxGear
 
-    @Unroll
-    def "should not downshift running on first gear when braking engine medium RPM"() {
+        singleKickDownThrottle | highRpm    | maxGear      | maxGear
 
-        given: "first gear, comfort mode, aggressive mode soft, medium RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(mediumRpm)
-
-        when: "brake force applied"
-        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
-
-        then: "gearbox engages first gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle           | input     | output
-        halfBrakeThreshold | firstGear | firstGear
-    }
-
-    @Unroll
-    def "should not downshift when braking engine high RPM"() {
-
-        given: "fourth gear, comfort mode, aggressive mode soft, high RPM"
-        gearbox.currentGear() >> input
-        changeToDriveComfortModeSoftChange(gearboxDriver)
-        gearboxDriver.onEngineRevsChange(highRpm)
-
-        when: "brake force applied"
-        gearboxDriver.onBrakeApplied(halfBrakeThreshold)
-
-        then: "gearbox engages fourth gear"
-        1 * gearbox.changeGear(output)
-
-        where:
-        throttle           | input      | output
-        halfBrakeThreshold | fourthGear | fourthGear
+        doubleKickDownThrottle | highRpm    | maxGear      | maxGear
     }
 }

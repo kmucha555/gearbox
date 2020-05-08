@@ -29,10 +29,10 @@ class GearboxDriverDriveStateSpec extends Specification implements PreparedInput
         gearboxDriver.checkGearboxState() == DRIVE
 
         and: "gearbox engages first gear"
-        1 * gearbox.changeGear(output)
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        drive_mode | output
+        drive_mode | expected_gear
         ECO        | firstGear
         COMFORT    | firstGear
         SPORT      | firstGear

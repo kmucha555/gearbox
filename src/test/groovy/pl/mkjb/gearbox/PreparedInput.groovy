@@ -11,9 +11,7 @@ import pl.mkjb.gearbox.settings.AggressiveMode
 
 import static pl.mkjb.gearbox.settings.AggressiveMode.HARD
 import static pl.mkjb.gearbox.settings.AggressiveMode.SOFT
-import static pl.mkjb.gearbox.settings.Mode.COMFORT
-import static pl.mkjb.gearbox.settings.Mode.ECO
-import static pl.mkjb.gearbox.settings.Mode.SPORT
+import static pl.mkjb.gearbox.settings.Mode.*
 import static pl.mkjb.gearbox.settings.Setting.*
 import static pl.mkjb.gearbox.settings.State.DRIVE
 import static pl.mkjb.gearbox.settings.State.MANUAL
@@ -46,6 +44,7 @@ trait PreparedInput {
     RevGauge mediumRpm = new RevGauge(MEDIUM_RPM)
     RevGauge highRpm = new RevGauge(HIGH_RPM)
     RevGauge veryHighRpm = new RevGauge(VERY_HIGH_RPM)
+    RevGauge maxRpm = new RevGauge(MAX_RPM)
 
     AggressiveMode softChange = SOFT
     AggressiveMode hardChange = HARD

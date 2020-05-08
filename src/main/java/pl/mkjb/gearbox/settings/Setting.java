@@ -31,6 +31,7 @@ public final class Setting {
     public static final int MEDIUM_RPM = 3000;
     public static final int HIGH_RPM = 5000;
     public static final int VERY_HIGH_RPM = 6500;
+    public static final int MAX_RPM = 7000;
 
     public static final int MIN_LINEAR_SPEED = -50;
     public static final int NO_SPEED = 0;

@@ -11,7 +11,7 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
     Gearbox gearbox = Mock()
     def gearboxDriver
 
-    def setup(){
+    def setup() {
         gearbox.currentGear() >> neutralGear
         gearboxDriver = GearboxDriver.powerUpGearbox(gearbox)
         gearboxDriver.onBrakeApplied(halfBrakeThreshold)
@@ -19,10 +19,10 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
     }
 
     @Unroll
-    def "should change gear to reverse no matter which drive mode is active (#input)"() {
+    def "should change gear to reverse no matter which drive mode is active (#drive_mode)"() {
 
         given: "applying drive mode"
-        gearboxDriver.onDriveModeChange(input)
+        gearboxDriver.onDriveModeChange(drive_mode)
 
         when: "gearstick is moved to reverse"
         gearboxDriver.onGearStickPositionChange(REVERSE)
@@ -31,20 +31,20 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
         gearboxDriver.checkGearboxState() == REVERSE
 
         and: "gearbox engages reverse gear"
-        1 * gearbox.changeGear(output)
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        input      | output
+        drive_mode | expected_gear
         ECO        | reverseGear
         COMFORT    | reverseGear
         SPORT      | reverseGear
     }
 
     @Unroll
-    def "should change gear to neutral no matter which drive mode is active (#input)"() {
+    def "should change gear to neutral no matter which drive mode is active (#drive_mode)"() {
 
         given: "applying drive mode"
-        gearboxDriver.onDriveModeChange(input)
+        gearboxDriver.onDriveModeChange(drive_mode)
 
         when: "gearstick is moved to neutral"
         gearboxDriver.onGearStickPositionChange(NEUTRAL)
@@ -53,20 +53,20 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
         gearboxDriver.checkGearboxState() == NEUTRAL
 
         and: "gearbox engages neutral gear"
-        1 * gearbox.changeGear(output)
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        input      | output
+        drive_mode | expected_gear
         ECO        | neutralGear
         COMFORT    | neutralGear
         SPORT      | neutralGear
     }
 
     @Unroll
-    def "should change gear to park no matter which drive mode is active (#input)"() {
+    def "should change gear to park no matter which drive mode is active (#drive_mode)"() {
 
         given: "applying drive mode"
-        gearboxDriver.onDriveModeChange(input)
+        gearboxDriver.onDriveModeChange(drive_mode)
 
         when: "gearstick is moved to park"
         gearboxDriver.onGearStickPositionChange(PARK)
@@ -75,10 +75,10 @@ class GearboxDriverOtherStatesSpec extends Specification implements PreparedInpu
         gearboxDriver.checkGearboxState() == PARK
 
         and: "gearbox engages neutral gear"
-        1 * gearbox.changeGear(output)
+        1 * gearbox.changeGear(expected_gear)
 
         where:
-        input      | output
+        drive_mode | expected_gear
         ECO        | neutralGear
         COMFORT    | neutralGear
         SPORT      | neutralGear

@@ -15,9 +15,9 @@ class GearboxDriverDriveStateComfortModeHardChangeSpec extends Specification imp
     @Unroll
     def "should kickdown from #current_gear to #expected_gear when #throttle throttle, engine #engine_rpm RPM"() {
 
-        given: "comfort mode, aggressive mode hard"
+        given: "drive mode comfort, gear change mode hard"
         gearbox.currentGear() >> current_gear
-        changeToDriveSportModeHardChange(gearboxDriver)
+        changeToDriveComfortModeHardChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(engine_rpm)
 
         when: "throttle is applied"
@@ -27,24 +27,26 @@ class GearboxDriverDriveStateComfortModeHardChangeSpec extends Specification imp
         1 * gearbox.changeGear(expected_gear)
 
         where:
-        throttle               | engine_rpm  | current_gear | expected_gear
-        singleKickDownThrottle | veryLowRpm  | thirdGear    | secondGear
-        singleKickDownThrottle | lowRpm      | thirdGear    | secondGear
-        singleKickDownThrottle | mediumRpm   | thirdGear    | secondGear
-        singleKickDownThrottle | highRpm     | thirdGear    | secondGear
-        singleKickDownThrottle | veryHighRpm | thirdGear    | secondGear
+        throttle               | engine_rpm | current_gear | expected_gear
+        singleKickDownThrottle | veryLowRpm | thirdGear    | secondGear
+        singleKickDownThrottle | lowRpm     | thirdGear    | secondGear
+        singleKickDownThrottle | mediumRpm  | thirdGear    | secondGear
+        singleKickDownThrottle | highRpm    | thirdGear    | secondGear
 
-        doubleKickDownThrottle | veryLowRpm  | thirdGear    | firstGear
-        doubleKickDownThrottle | lowRpm      | thirdGear    | firstGear
-        doubleKickDownThrottle | mediumRpm   | thirdGear    | firstGear
-        doubleKickDownThrottle | highRpm     | thirdGear    | firstGear
-        doubleKickDownThrottle | veryHighRpm | thirdGear    | firstGear
+        doubleKickDownThrottle | veryLowRpm | fourthGear   | thirdGear
+        doubleKickDownThrottle | veryLowRpm | secondGear   | firstGear
+        doubleKickDownThrottle | lowRpm     | fourthGear   | thirdGear
+        doubleKickDownThrottle | lowRpm     | secondGear   | firstGear
+        doubleKickDownThrottle | mediumRpm  | thirdGear    | secondGear
+        doubleKickDownThrottle | mediumRpm  | secondGear   | firstGear
+        doubleKickDownThrottle | highRpm    | secondGear   | firstGear
+        doubleKickDownThrottle | highRpm    | thirdGear    | secondGear
     }
 
     @Unroll
     def "should downshift from #current_gear to #expected_gear when #throttle throttle, engine #engine_rpm RPM"() {
 
-        given: "comfort mode, aggressive mode hard"
+        given: "drive mode comfort, gear change mode hard"
         gearbox.currentGear() >> current_gear
         changeToDriveComfortModeHardChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(engine_rpm)
@@ -66,6 +68,8 @@ class GearboxDriverDriveStateComfortModeHardChangeSpec extends Specification imp
         singleKickDownThrottle | lowRpm     | fourthGear   | thirdGear
         singleKickDownThrottle | mediumRpm  | thirdGear    | secondGear
         singleKickDownThrottle | mediumRpm  | secondGear   | firstGear
+        singleKickDownThrottle | highRpm    | secondGear   | firstGear
+        singleKickDownThrottle | highRpm    | thirdGear    | secondGear
 
         doubleKickDownThrottle | veryLowRpm | fourthGear   | thirdGear
         doubleKickDownThrottle | veryLowRpm | secondGear   | firstGear
@@ -73,12 +77,14 @@ class GearboxDriverDriveStateComfortModeHardChangeSpec extends Specification imp
         doubleKickDownThrottle | lowRpm     | secondGear   | firstGear
         doubleKickDownThrottle | mediumRpm  | thirdGear    | secondGear
         doubleKickDownThrottle | mediumRpm  | secondGear   | firstGear
+        doubleKickDownThrottle | highRpm    | secondGear   | firstGear
+        doubleKickDownThrottle | highRpm    | thirdGear    | secondGear
     }
 
     @Unroll
     def "should not downshift from #current_gear when #throttle throttle, engine #engine_rpm RPM"() {
 
-        given: "comfort mode, aggressive mode hard"
+        given: "drive mode comfort, gear change mode hard"
         gearbox.currentGear() >> current_gear
         changeToDriveComfortModeHardChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(engine_rpm)
@@ -109,7 +115,7 @@ class GearboxDriverDriveStateComfortModeHardChangeSpec extends Specification imp
     @Unroll
     def "should not downshift from #current_gear when #brake braking, engine #engine_rpm RPM"() {
 
-        given: "comfort mode, aggressive mode hard"
+        given: "drive mode comfort, gear change mode hard"
         gearbox.currentGear() >> current_gear
         changeToDriveComfortModeHardChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(engine_rpm)
@@ -123,10 +129,8 @@ class GearboxDriverDriveStateComfortModeHardChangeSpec extends Specification imp
         where:
         brake              | engine_rpm  | current_gear | expected_gear
         halfBrakeThreshold | veryLowRpm  | firstGear    | firstGear
-        halfBrakeThreshold | veryLowRpm  | fourthGear   | thirdGear
 
         halfBrakeThreshold | lowRpm      | firstGear    | firstGear
-        halfBrakeThreshold | lowRpm      | fourthGear   | thirdGear
 
         halfBrakeThreshold | mediumRpm   | fourthGear   | fourthGear
         halfBrakeThreshold | mediumRpm   | firstGear    | firstGear
@@ -141,7 +145,7 @@ class GearboxDriverDriveStateComfortModeHardChangeSpec extends Specification imp
     @Unroll
     def "should upshift from #current_gear to #expected_gear when #throttle throttle, engine #engine_rpm RPM"() {
 
-        given: "comfort mode, aggressive mode hard"
+        given: "drive mode comfort, gear change mode hard"
         gearbox.currentGear() >> current_gear
         changeToDriveComfortModeHardChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(engine_rpm)
@@ -155,16 +159,17 @@ class GearboxDriverDriveStateComfortModeHardChangeSpec extends Specification imp
         where:
         throttle               | engine_rpm  | current_gear | expected_gear
         belowKickDownThrottle  | highRpm     | thirdGear    | fourthGear
-
         belowKickDownThrottle  | veryHighRpm | thirdGear    | fourthGear
+
         singleKickDownThrottle | veryHighRpm | thirdGear    | fourthGear
+
         doubleKickDownThrottle | veryHighRpm | thirdGear    | fourthGear
     }
 
     @Unroll
     def "should not upshift from #current_gear when #throttle throttle, engine #engine_rpm RPM"() {
 
-        given: "comfort mode, aggressive mode hard"
+        given: "drive mode comfort, gear change mode hard"
         gearbox.currentGear() >> current_gear
         changeToDriveComfortModeHardChange(gearboxDriver)
         gearboxDriver.onEngineRevsChange(engine_rpm)
@@ -176,12 +181,18 @@ class GearboxDriverDriveStateComfortModeHardChangeSpec extends Specification imp
         1 * gearbox.changeGear(expected_gear)
 
         where:
-        throttle              | engine_rpm  | current_gear | expected_gear
-        belowKickDownThrottle | lowRpm      | thirdGear    | thirdGear
-        belowKickDownThrottle | mediumRpm   | thirdGear    | thirdGear
+        throttle               | engine_rpm  | current_gear | expected_gear
+        belowKickDownThrottle  | lowRpm      | thirdGear    | thirdGear
+        belowKickDownThrottle  | mediumRpm   | thirdGear    | thirdGear
 
-        belowKickDownThrottle | mediumRpm   | maxGear      | maxGear
-        belowKickDownThrottle | highRpm     | maxGear      | maxGear
-        belowKickDownThrottle | veryHighRpm | maxGear      | maxGear
+        belowKickDownThrottle  | lowRpm      | maxGear      | maxGear
+        belowKickDownThrottle  | mediumRpm   | maxGear      | maxGear
+        belowKickDownThrottle  | highRpm     | maxGear      | maxGear
+        belowKickDownThrottle  | veryHighRpm | maxGear      | maxGear
+
+        singleKickDownThrottle | veryHighRpm | maxGear      | maxGear
+
+        doubleKickDownThrottle | veryHighRpm | maxGear      | maxGear
+
     }
 }
